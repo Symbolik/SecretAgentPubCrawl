@@ -3,7 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
-
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+        }
+    }
     defaultConfig {
         applicationId "ca.mixitmedia.weaver"
         minSdkVersion 15
@@ -11,15 +15,20 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
     buildTypes {
-        release {
+        debug {
             runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
 }
 
 dependencies {
     compile 'com.android.support:support-v13:20.0.0'
+    compile 'com.google.android.gms:play-services:5.0.77'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

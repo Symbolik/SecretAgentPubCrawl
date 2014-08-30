@@ -5,23 +5,145 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-    <SurfaceView
-        android:layout_width="0px"
-        android:layout_height=" 0dp"
-        android:id="@+id/surfaceView"
-        android:layout_gravity="right|top" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/tableLayout"
+            android:id="@+id/frameLayout">
 
-    <FrameLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragment_container"
-        android:layout_marginBottom="-20dp"
-        android:layout_alignParentTop="true">
+            <View
+                android:layout_width="1px"
+                android:layout_height="fill_parent"
+                android:background="#88eeb311"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp"
+                android:id="@+id/selector1" />
+            </RelativeLayout>
 
-    </FrameLayout>
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/tableLayout">
 
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="100">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/Menu"
+                    android:src="@drawable/ic_drawer"
+                    android:layout_weight="5"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:clickable="true"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp" />
+                <View
+                    android:layout_height="fill_parent"
+                    android:layout_width="1dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Video"
+                    android:src="@android:drawable/ic_menu_slideshow"
+                    android:layout_weight="19"
+                    android:clickable="true"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+                <View
+                    android:layout_height="fill_parent"
+                    android:layout_width="1dp"
+                    android:background="@android:color/darker_gray"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/LocMap"
+                    android:src="@android:drawable/ic_dialog_map"
+                    android:layout_weight="19"
+                    android:clickable="true"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+                <View
+                    android:layout_height="fill_parent"
+                    android:layout_width="1dp"
+                    android:background="@android:color/darker_gray"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Compass"
+                    android:src="@android:drawable/ic_menu_mylocation"
+                    android:layout_weight="19"
+                    android:clickable="true"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+                <View
+                    android:layout_height="fill_parent"
+                    android:layout_width="1dp"
+                    android:background="@android:color/darker_gray"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Camera"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:layout_weight="19"
+                    android:clickable="true"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+                <View
+                    android:layout_height="fill_parent"
+                    android:layout_width="1dp"
+                    android:background="@android:color/darker_gray"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Badges"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    android:layout_weight="19"
+                    android:clickable="true"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+
+            </TableRow>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="5dp"
+                android:background="@android:color/black"
+                android:visibility="visible" >
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="fill_parent"
+                    android:background="@android:color/darker_gray"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="0dp"
+                    android:id="@+id/selector2" />
+            </RelativeLayout>
+        </TableLayout>
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/fragment_container"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/frameLayout"></FrameLayout>
+    </RelativeLayout>
     <fragment android:id="@+id/navigation_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"

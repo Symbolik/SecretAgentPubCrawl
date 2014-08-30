@@ -1,15 +1,11 @@
 package ca.mixitmedia.weaver;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,22 +17,26 @@ public abstract class DrawerActivity extends Activity{
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
+        final NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+        getNavigationButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNavigationDrawerFragment.Toggle();
+            }
+        });
     }
 
-    public abstract void onNavigationDrawerItemSelected(int position);
 
     public static class NavigationDrawerFragment extends Fragment {
 
         private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
         private DrawerActivity activity;
-        private ActionBarDrawerToggle mDrawerToggle;
         private DrawerLayout mDrawerLayout;
         private ListView mDrawerListView;
         private View mFragmentContainerView;
@@ -75,47 +75,12 @@ public abstract class DrawerActivity extends Activity{
             mFragmentContainerView = getActivity().findViewById(fragmentId);
             mDrawerLayout = drawerLayout;
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-            ActionBar actionBar = getActivity().getActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-
-            mDrawerToggle = new ActionBarDrawerToggle(
-                    getActivity(),                    /* host Activity */
-                    mDrawerLayout,                    /* DrawerLayout object */
-                    R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
-                    R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
-                    R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
-            ) {
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                    if (!isAdded()) {
-                        return;
-                    }
-
-                    getActivity().invalidateOptionsMenu();
-                }
-
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    super.onDrawerOpened(drawerView);
-                    if (!isAdded()) {
-                        return;
-                    }
-
-                    getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                }
-            };
-
-            // Defer code dependent on restoration of previous instance state.
-            mDrawerLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mDrawerToggle.syncState();
-                }
+            mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+                @Override public void onDrawerSlide(View view, float v) {/*No Op*/ }
+                @Override public void onDrawerOpened(View view) {/*Todo: Add shadow to main View.*/}
+                @Override public void onDrawerClosed(View view) {/*Todo: Remove shadow from main View.*/}
+                @Override public void onDrawerStateChanged(int i) {/*No Op*/}
             });
-
-            mDrawerLayout.setDrawerListener(mDrawerToggle);
         }
 
         private void selectItem(int position) {
@@ -137,18 +102,15 @@ public abstract class DrawerActivity extends Activity{
             outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
         }
 
-        @Override
-        public void onConfigurationChanged(Configuration newConfig) {
-            super.onConfigurationChanged(newConfig);
-            mDrawerToggle.onConfigurationChanged(newConfig);
+        public void Toggle() {
+            if (mDrawerLayout.isDrawerOpen(mDrawerListView)) mDrawerLayout.closeDrawer(mDrawerListView);
+            else mDrawerLayout.openDrawer(mDrawerListView);
         }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-        }
-
     }
+
+    protected abstract View getNavigationButton();
+
+    protected abstract void onNavigationDrawerItemSelected(int position);
 
     protected abstract ListAdapter getDrawerListAdapter();
 
