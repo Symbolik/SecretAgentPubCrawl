@@ -14,9 +14,7 @@ import ca.mixitmedia.weaver.Tools.Tools;
 
 public class MainActivity extends DrawerActivity {
 
-
-
-    private LinkedHashMap<String, ImageView> toolButtons = new LinkedHashMap<String, ImageView>();
+    private LinkedHashMap<String, ImageView> toolButtons = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +26,7 @@ public class MainActivity extends DrawerActivity {
     @Override
     public void onWindowFocusChanged (boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus)
-        Tools.refreshSelector(Tools.Current());
+        if (hasFocus) Tools.refreshSelector(Tools.Current());
     }
 
     @Override

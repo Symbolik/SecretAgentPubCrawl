@@ -1,9 +1,13 @@
 package ca.mixitmedia.weaver.Tools;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +26,6 @@ import ca.mixitmedia.weaver.R;
  * Created by Dante on 2014-07-27
  */
 public class Tools {
-
 
     public static VideoPlayerTool Video;
     public static MapTool MapTool;
@@ -46,17 +49,30 @@ public class Tools {
         Badges      = new TestFragment().setColor(Color.CYAN);
 
         toolButtons = new HashMap<>();
-        toolButtons.put(Video,       (ImageView) Main.findViewById(R.id.Video  ));
+        toolButtons.put(Video,   (ImageView) Main.findViewById(R.id.Video  ));
         toolButtons.put(MapTool, (ImageView) Main.findViewById(R.id.LocMap ));
-        toolButtons.put(Compass,     (ImageView) Main.findViewById(R.id.Compass));
-        toolButtons.put(Camera,      (ImageView) Main.findViewById(R.id.Camera ));
-        toolButtons.put(Badges,      (ImageView) Main.findViewById(R.id.Badges ));
+        toolButtons.put(Compass, (ImageView) Main.findViewById(R.id.Compass));
+        toolButtons.put(Camera,  (ImageView) Main.findViewById(R.id.Camera ));
+        toolButtons.put(Badges,  (ImageView) Main.findViewById(R.id.Badges ));
 
         selector1 = Main.findViewById(R.id.selector1);
         selector2 = Main.findViewById(R.id.selector2);
 
         for(final Fragment s : toolButtons.keySet()){
-            toolButtons.get(s).setColorFilter(Main.getResources().getColor(R.color.RyeYellow), PorterDuff.Mode.MULTIPLY);
+	        /* Candidates:
+	        ADD
+			DARKEN
+			DST_ATOP
+			DST_OVER
+			LIGHTEN
+			MULTIPLY
+			OVERLAY
+			SCREEN
+			SRC_ATOP
+			SRC_IN
+	         */
+//            toolButtons.get(s).setColorFilter(Main.getResources().getColor(R.color.RyeYellow), PorterDuff.Mode.SRC_IN);
+	        colorImageView(Main, toolButtons.get(s), R.color.RyeBlue);
             toolButtons.get(s).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -66,6 +82,18 @@ public class Tools {
         }
         swapTo(Video);
     }
+
+	public static void colorImageView(Context context, ImageView imageView, @ColorRes int colorResId) {
+		Drawable drawable = imageView.getDrawable();
+		int color = context.getResources().getColor(colorResId);
+
+		drawable.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[] {
+				0, 0, 0, 0, Color.red(color),
+				0, 0, 0, 0, Color.green(color),
+				0, 0, 0, 0, Color.blue(color),
+				0, 0, 0, 1, 255 - Color.alpha(color),
+		})));
+	}
 
     public static Iterable<Fragment> All() {
         return Arrays.asList(
@@ -83,11 +111,12 @@ public class Tools {
     public static void swapTo(Fragment tool){
         if (Tools.Current() == tool) return;
 
-        if (toolButtons.keySet().contains(Tools.Current()))
-            toolButtons.get(Current()).setColorFilter(Main.getResources().getColor(R.color.RyeYellow));
-
-        ImageView v = toolButtons.get(tool);
-        v.setColorFilter(Main.getResources().getColor(R.color.RyeBlue));
+//        if (toolButtons.keySet().contains(Tools.Current()))
+//            toolButtons.get(Current()).setColorFilter(Main.getResources().getColor(R.color.RyeYellow));
+//
+//        toolButtons.get(tool).setColorFilter(Main.getResources().getColor(R.color.RyeBlue));
+		if (toolButtons.keySet().contains(Tools.Current())) colorImageView(Main, toolButtons.get(Current()), R.color.RyeBlue);
+	    colorImageView(Main, toolButtons.get(tool), R.color.RyeYellow);
 
         Main.getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, tool)
@@ -109,7 +138,7 @@ public class Tools {
     public static Fragment byName(String ToolName) {
         switch (ToolName.toLowerCase()) {
             case "video":   return Video;
-            case "locmap":  return MapTool;
+            case "maptool": return MapTool;
             case "compass": return Compass;
             case "camera":  return Camera;
             case "badges":  return Badges;

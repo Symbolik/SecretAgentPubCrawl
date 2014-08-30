@@ -27,9 +27,11 @@ public class MapTool extends Fragment implements OnMarkerClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    super.onCreateView(inflater, container, savedInstanceState);
-	    View view = inflater.inflate(R.layout.fragment_map, container, false);
+	    //View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-        return view;
+        //return view;
+
+	    return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
 	@Override
@@ -70,7 +72,9 @@ public class MapTool extends Fragment implements OnMarkerClickListener {
 		markers.put(title, map.addMarker(new MarkerOptions()
 				.title(title)
 				.position(new LatLng(lat, lang))
-				.icon(BitmapDescriptorFactory.fromResource(active ? R.drawable.pin_blue_yellow_center : R.drawable.pin_blue))));
+				.icon(BitmapDescriptorFactory.fromResource(active ?
+						R.drawable.pin_blue_yellow_center : //if active
+						R.drawable.pin_blue)))); //if !active
 	}
 
 	@Override
