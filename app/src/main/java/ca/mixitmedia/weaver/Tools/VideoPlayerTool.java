@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 
 import ca.mixitmedia.weaver.R;
 
-public class LocMap extends Fragment{
+public class VideoPlayerTool extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_locmap,null);
+        return inflater.inflate(R.layout.fragment_video_player,null);
     }
 }

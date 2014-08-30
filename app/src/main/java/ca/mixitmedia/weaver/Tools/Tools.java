@@ -24,11 +24,12 @@ import ca.mixitmedia.weaver.R;
 public class Tools {
 
 
-    public static VideoPlayer Video   ;
-    public static LocMap LocMap  ;
-    public static Fragment Compass ;
-    public static Fragment Camera  ;
-    public static Fragment Badges  ;
+    public static VideoPlayerTool Video;
+    public static MapTool MapTool;
+
+    public static Fragment Compass;
+    public static Fragment Camera;
+    public static Fragment Badges;
 
     private static HashMap<Fragment, ImageView> toolButtons;
     private static MainActivity Main;
@@ -37,19 +38,19 @@ public class Tools {
     private static View selector2;
 
     public static void init(MainActivity Main) {
-        Tools.Main = Main;
-        Video      = new VideoPlayer();
-        LocMap     = new LocMap();
-        Compass    = new TestFragment().setColor(Color.GREEN);
-        Camera     = new TestFragment().setColor(Color.BLUE);
-        Badges     = new TestFragment().setColor(Color.CYAN);
+        Tools.Main  = Main;
+        Video       = new VideoPlayerTool();
+        MapTool = new MapTool();
+        Compass     = new TestFragment().setColor(Color.GREEN);
+        Camera      = new TestFragment().setColor(Color.BLUE);
+        Badges      = new TestFragment().setColor(Color.CYAN);
 
         toolButtons = new HashMap<>();
-        toolButtons.put(Video   ,(ImageView)Main.findViewById(R.id.Video    ));
-        toolButtons.put(LocMap  ,(ImageView)Main.findViewById(R.id.LocMap   ));
-        toolButtons.put(Compass ,(ImageView)Main.findViewById(R.id.Compass  ));
-        toolButtons.put(Camera  ,(ImageView)Main.findViewById(R.id.Camera   ));
-        toolButtons.put(Badges  ,(ImageView)Main.findViewById(R.id.Badges   ));
+        toolButtons.put(Video,       (ImageView) Main.findViewById(R.id.Video  ));
+        toolButtons.put(MapTool, (ImageView) Main.findViewById(R.id.LocMap ));
+        toolButtons.put(Compass,     (ImageView) Main.findViewById(R.id.Compass));
+        toolButtons.put(Camera,      (ImageView) Main.findViewById(R.id.Camera ));
+        toolButtons.put(Badges,      (ImageView) Main.findViewById(R.id.Badges ));
 
         selector1 = Main.findViewById(R.id.selector1);
         selector2 = Main.findViewById(R.id.selector2);
@@ -68,11 +69,11 @@ public class Tools {
 
     public static Iterable<Fragment> All() {
         return Arrays.asList(
-                Video       ,
-                LocMap      ,
-                Compass     ,
-                Camera      ,
-                Badges      );
+                Video,
+		        MapTool,
+                Compass,
+                Camera,
+                Badges);
     }
 
     public static Fragment Current() {
@@ -104,13 +105,14 @@ public class Tools {
         selector1.animate().x(x + width/2);
         selector2.animate().x(x + width/2);
     }
+
     public static Fragment byName(String ToolName) {
         switch (ToolName.toLowerCase()) {
-            case "video"    :return Video      ;
-            case "locmap"   :return LocMap     ;
-            case "compass"  :return Compass    ;
-            case "camera"   :return Camera     ;
-            case "badges"   :return Badges     ;
+            case "video":   return Video;
+            case "locmap":  return MapTool;
+            case "compass": return Compass;
+            case "camera":  return Camera;
+            case "badges":  return Badges;
 
             default:
                 Log.e("Tools", "Tried to get non-Existent Tool" + ToolName);
@@ -120,17 +122,17 @@ public class Tools {
 
     public static class TestFragment extends Fragment {
         int Color;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View v = new View(getActivity());
             v.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             return v;
         }
+
         public TestFragment setColor(int Color){
             this.Color = Color;
             return this;
         }
-
-
     }
 }

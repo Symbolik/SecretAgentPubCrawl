@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:foregroundGravity="center">
+
+	<fragment android:id="@+id/googleMap"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  android:name="com.google.android.gms.maps.MapFragment"/>
+
+</RelativeLayout>
