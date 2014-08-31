@@ -2,9 +2,11 @@ package ca.mixitmedia.weaver.Tools;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -18,8 +20,8 @@ import android.widget.ImageView;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import ca.mixitmedia.weaver.MainActivity;
 import ca.mixitmedia.weaver.R;
+import ca.mixitmedia.weaver.WeaverActivity;
 
 
 /**
@@ -27,30 +29,31 @@ import ca.mixitmedia.weaver.R;
  */
 public class Tools {
 
-    public static VideoPlayerTool Video;
-    public static MapTool MapTool;
+    public static WeaverVideoFragment WeaverVideoFragment;
+    public static WeaverMapFragment WeaverMapFragment;
 
     public static Fragment Compass;
     public static Fragment Camera;
     public static Fragment Badges;
 
     private static HashMap<Fragment, ImageView> toolButtons;
-    private static MainActivity Main;
+    private static WeaverActivity Main;
 
     private static View selector1;
     private static View selector2;
 
-    public static void init(MainActivity Main) {
+    public static void init(WeaverActivity Main) {
         Tools.Main  = Main;
-        Video       = new VideoPlayerTool();
-        MapTool = new MapTool();
-        Compass     = new TestFragment().setColor(Color.GREEN);
-        Camera      = new TestFragment().setColor(Color.BLUE);
-        Badges      = new TestFragment().setColor(Color.CYAN);
+
+        WeaverVideoFragment = new WeaverVideoFragment();
+        WeaverMapFragment   = new WeaverMapFragment();
+        Compass             = new TestFragment().setColor(Color.GREEN);
+        Camera              = new TestFragment().setColor(Color.BLUE);
+        Badges              = new TestFragment().setColor(Color.CYAN);
 
         toolButtons = new HashMap<>();
-        toolButtons.put(Video,   (ImageView) Main.findViewById(R.id.Video  ));
-        toolButtons.put(MapTool, (ImageView) Main.findViewById(R.id.LocMap ));
+        toolButtons.put(WeaverVideoFragment,   (ImageView) Main.findViewById(R.id.Video  ));
+        toolButtons.put(WeaverMapFragment, (ImageView) Main.findViewById(R.id.LocMap ));
         toolButtons.put(Compass, (ImageView) Main.findViewById(R.id.Compass));
         toolButtons.put(Camera,  (ImageView) Main.findViewById(R.id.Camera ));
         toolButtons.put(Badges,  (ImageView) Main.findViewById(R.id.Badges ));
@@ -80,25 +83,38 @@ public class Tools {
                 }
             });
         }
-        swapTo(Video);
+        swapTo(WeaverVideoFragment);
     }
 
 	public static void colorImageView(Context context, ImageView imageView, @ColorRes int colorResId) {
 		Drawable drawable = imageView.getDrawable();
 		int color = context.getResources().getColor(colorResId);
 
+		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap().copy(Bitmap.Config.ARGB_8888, true);
+
+		for (int x = 0; x < bitmap.getWidth(); x++) {
+			for (int y = 0; y < bitmap.getHeight(); y++) {
+				int pixel = bitmap.getPixel(x, y);
+				int r = Color.red(pixel), g = Color.green(pixel), b = Color.blue(pixel);
+				if (Color.alpha(pixel) > 140) bitmap.setPixel(x, y, Color.rgb(r, g, b));
+			}
+		}
+
+		drawable = new BitmapDrawable(context.getResources(), bitmap);
 		drawable.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[] {
 				0, 0, 0, 0, Color.red(color),
 				0, 0, 0, 0, Color.green(color),
 				0, 0, 0, 0, Color.blue(color),
 				0, 0, 0, 1, 255 - Color.alpha(color),
 		})));
+
+		imageView.setImageDrawable(drawable);
 	}
 
     public static Iterable<Fragment> All() {
         return Arrays.asList(
-                Video,
-		        MapTool,
+		        WeaverVideoFragment,
+		        WeaverMapFragment,
                 Compass,
                 Camera,
                 Badges);
@@ -137,8 +153,8 @@ public class Tools {
 
     public static Fragment byName(String ToolName) {
         switch (ToolName.toLowerCase()) {
-            case "video":   return Video;
-            case "maptool": return MapTool;
+            case "video":   return WeaverVideoFragment;
+            case "maptool": return WeaverMapFragment;
             case "compass": return Compass;
             case "camera":  return Camera;
             case "badges":  return Badges;

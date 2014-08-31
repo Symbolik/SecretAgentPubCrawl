@@ -4,24 +4,30 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
-
-import java.util.LinkedHashMap;
 
 import ca.mixitmedia.weaver.Tools.Tools;
 
 
-public class MainActivity extends DrawerActivity {
+public class WeaverActivity extends DrawerActivity {
 
-    private LinkedHashMap<String, ImageView> toolButtons = new LinkedHashMap<>();
+	boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+	    isDestroyed = false;
+
         setContentView(R.layout.activity_main);
         Tools.init(this);
     }
+
+	@Override
+	public void onDestroy() {
+		isDestroyed = true;
+		super.onDestroy();
+	}
 
     @Override
     public void onWindowFocusChanged (boolean hasFocus) {
@@ -63,4 +69,8 @@ public class MainActivity extends DrawerActivity {
             }
         };
     }
+
+	public boolean isDestroyed() {
+		return isDestroyed;
+	}
 }

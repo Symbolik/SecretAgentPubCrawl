@@ -19,12 +19,11 @@
             <View
                 android:layout_width="1px"
                 android:layout_height="fill_parent"
-                android:background="#88eeb311"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="0dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="0dp"
-                android:id="@+id/selector1" />
+                android:id="@+id/selector1" /> <!--TODO: change bg colour -->
             </RelativeLayout>
 
         <TableLayout
@@ -51,8 +50,10 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp" />
                 <View
-                    android:layout_height="fill_parent"
+                    android:layout_height="42px"
                     android:layout_width="1dp"
+					android:layout_marginTop="21px"
+					android:layout_marginBottom="21px"
                     android:background="@android:color/darker_gray"/>
 
                 <ImageView
@@ -65,8 +66,10 @@
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp" />
                 <View
-                    android:layout_height="fill_parent"
+                    android:layout_height="42px"
                     android:layout_width="1dp"
+					android:layout_marginTop="21px"
+					android:layout_marginBottom="21px"
                     android:background="@android:color/darker_gray"/>
                 <ImageView
                     android:layout_width="0dp"
@@ -78,8 +81,10 @@
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp" />
                 <View
-                    android:layout_height="fill_parent"
+                    android:layout_height="42px"
                     android:layout_width="1dp"
+					android:layout_marginTop="21px"
+					android:layout_marginBottom="21px"
                     android:background="@android:color/darker_gray"/>
                 <ImageView
                     android:layout_width="0dp"
@@ -91,8 +96,10 @@
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp" />
                 <View
-                    android:layout_height="fill_parent"
+                    android:layout_height="42px"
                     android:layout_width="1dp"
+					android:layout_marginTop="21px"
+					android:layout_marginBottom="21px"
                     android:background="@android:color/darker_gray"/>
                 <ImageView
                     android:layout_width="0dp"
@@ -104,8 +111,10 @@
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp" />
                 <View
-                    android:layout_height="fill_parent"
+                    android:layout_height="42px"
                     android:layout_width="1dp"
+					android:layout_marginTop="21px"
+					android:layout_marginBottom="21px"
                     android:background="@android:color/darker_gray"/>
                 <ImageView
                     android:layout_width="0dp"
@@ -122,12 +131,12 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="5dp"
-                android:background="@android:color/black"
+                android:background="@color/RyeBlue"
                 android:visibility="visible" >
                 <View
                     android:layout_width="1px"
                     android:layout_height="fill_parent"
-                    android:background="@android:color/darker_gray"
+                    android:background="@color/RyeYellow"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="0dp"
                     android:layout_alignParentTop="true"

@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-public abstract class DrawerActivity extends Activity{
+public abstract class DrawerActivity extends Activity {
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

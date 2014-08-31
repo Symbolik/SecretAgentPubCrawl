@@ -4,9 +4,15 @@
 				android:layout_height="fill_parent"
 				android:foregroundGravity="center">
 
-	<fragment android:id="@+id/googleMap"
-			  android:layout_width="fill_parent"
-			  android:layout_height="fill_parent"
-			  android:name="com.google.android.gms.maps.MapFragment"/>
+	<!--<fragment android:id="@+id/googleMap"-->
+			  <!--android:layout_width="fill_parent"-->
+			  <!--android:layout_height="fill_parent"-->
+			  <!--android:name="com.google.android.gms.maps.MapFragment"/>-->
+
+	<LinearLayout
+		android:id="@+id/googleMapHolder"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"/>
 
 </RelativeLayout>
