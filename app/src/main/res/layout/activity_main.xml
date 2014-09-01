@@ -71,15 +71,24 @@
 					android:layout_marginTop="21px"
 					android:layout_marginBottom="21px"
                     android:background="@android:color/darker_gray"/>
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/LocMap"
-                    android:src="@android:drawable/ic_dialog_map"
-                    android:layout_weight="19"
-                    android:clickable="true"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp" />
+                <!--<ImageView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/LocMap"-->
+                    <!--android:src="@android:drawable/ic_menu_mapmode"-->
+                    <!--android:layout_weight="19"-->
+                    <!--android:clickable="true"-->
+                    <!--android:paddingTop="5dp"-->
+                    <!--android:paddingBottom="5dp" />-->
+				<ImageView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:id="@+id/LocMap"
+					android:src="@android:drawable/ic_menu_mapmode"
+					android:layout_weight="19"
+					android:clickable="true"
+					android:paddingTop="5dp"
+					android:paddingBottom="5dp" />
                 <View
                     android:layout_height="42px"
                     android:layout_width="1dp"
@@ -90,7 +99,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/Compass"
-                    android:src="@android:drawable/ic_menu_mylocation"
+                    android:src="@android:drawable/ic_menu_compass"
                     android:layout_weight="19"
                     android:clickable="true"
                     android:paddingTop="5dp"

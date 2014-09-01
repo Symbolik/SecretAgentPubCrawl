@@ -2,11 +2,9 @@ package ca.mixitmedia.weaver.Tools;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -90,25 +88,16 @@ public class Tools {
 		Drawable drawable = imageView.getDrawable();
 		int color = context.getResources().getColor(colorResId);
 
-		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap().copy(Bitmap.Config.ARGB_8888, true);
-
-		for (int x = 0; x < bitmap.getWidth(); x++) {
-			for (int y = 0; y < bitmap.getHeight(); y++) {
-				int pixel = bitmap.getPixel(x, y);
-				int r = Color.red(pixel), g = Color.green(pixel), b = Color.blue(pixel);
-				if (Color.alpha(pixel) > 140) bitmap.setPixel(x, y, Color.rgb(r, g, b));
-			}
-		}
-
-		drawable = new BitmapDrawable(context.getResources(), bitmap);
+		/*You know those really nasty, gross, finicky pieces of code... The ones you've waged war with f
+		for hours. Hours and hours of just tedious, fucking bullshit? Yeah, this is one of those. It's
+		decent enough, and the time is over. It's done. Don't touch it. Just... don't. Hide it here,
+		collapse the method... and never look at it ever... ever again. */
 		drawable.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[] {
-				0, 0, 0, 0, Color.red(color),
-				0, 0, 0, 0, Color.green(color),
-				0, 0, 0, 0, Color.blue(color),
-				0, 0, 0, 1, 255 - Color.alpha(color),
+				1.8f, 0,    0,    0, Color.red(color),
+				0,    1.8f, 0,    0, Color.green(color),
+				0,    0,    1.8f, 0, Color.blue(color),
+				0,    0,    0,    2, 0,
 		})));
-
-		imageView.setImageDrawable(drawable);
 	}
 
     public static Iterable<Fragment> All() {
