@@ -27,12 +27,11 @@ import ca.mixitmedia.weaver.WeaverActivity;
  */
 public class Tools {
 
-    public static WeaverVideoFragment WeaverVideoFragment;
-    public static WeaverMapFragment WeaverMapFragment;
-
-    public static Fragment Compass;
-    public static Fragment Camera;
-    public static Fragment Badges;
+    public static WeaverVideoFragment   videoFragment   ;
+    public static WeaverMapFragment     mapFragment     ;
+    public static WeaverLocatorFragment locatorFragment ;
+    public static Fragment              cameraFragment  ;
+    public static Fragment              badgeFragment   ;
 
     private static HashMap<Fragment, ImageView> toolButtons;
     private static WeaverActivity Main;
@@ -43,18 +42,18 @@ public class Tools {
     public static void init(WeaverActivity Main) {
         Tools.Main  = Main;
 
-        WeaverVideoFragment = new WeaverVideoFragment();
-        WeaverMapFragment   = new WeaverMapFragment();
-        Compass             = new TestFragment().setColor(Color.GREEN);
-        Camera              = new TestFragment().setColor(Color.BLUE);
-        Badges              = new TestFragment().setColor(Color.CYAN);
+        videoFragment   = new WeaverVideoFragment();
+        mapFragment     = new WeaverMapFragment();
+        locatorFragment = new WeaverLocatorFragment();
+        cameraFragment      = new TestFragment().setColor(Color.BLUE);
+        badgeFragment       = new TestFragment().setColor(Color.CYAN);
 
         toolButtons = new HashMap<>();
-        toolButtons.put(WeaverVideoFragment,   (ImageView) Main.findViewById(R.id.Video  ));
-        toolButtons.put(WeaverMapFragment, (ImageView) Main.findViewById(R.id.LocMap ));
-        toolButtons.put(Compass, (ImageView) Main.findViewById(R.id.Compass));
-        toolButtons.put(Camera,  (ImageView) Main.findViewById(R.id.Camera ));
-        toolButtons.put(Badges,  (ImageView) Main.findViewById(R.id.Badges ));
+        toolButtons.put(videoFragment       ,(ImageView) Main.findViewById(R.id.Video  ));
+        toolButtons.put(mapFragment         ,(ImageView) Main.findViewById(R.id.LocMap ));
+        toolButtons.put(locatorFragment     ,(ImageView) Main.findViewById(R.id.Compass));
+        toolButtons.put(cameraFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
+        toolButtons.put(badgeFragment       ,(ImageView) Main.findViewById(R.id.Badges ));
 
         selector1 = Main.findViewById(R.id.selector1);
         selector2 = Main.findViewById(R.id.selector2);
@@ -73,7 +72,7 @@ public class Tools {
 			SRC_IN
 	         */
 //            toolButtons.get(s).setColorFilter(Main.getResources().getColor(R.color.RyeYellow), PorterDuff.Mode.SRC_IN);
-	        colorImageView(Main, toolButtons.get(s), R.color.RyeBlue);
+	        colorImageView(toolButtons.get(s), R.color.RyeBlue);
             toolButtons.get(s).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -81,32 +80,18 @@ public class Tools {
                 }
             });
         }
-        swapTo(WeaverVideoFragment);
+        swapTo(videoFragment);
     }
 
-	public static void colorImageView(Context context, ImageView imageView, @ColorRes int colorResId) {
-		Drawable drawable = imageView.getDrawable();
-		int color = context.getResources().getColor(colorResId);
 
-		/*You know those really nasty, gross, finicky pieces of code... The ones you've waged war with f
-		for hours. Hours and hours of just tedious, fucking bullshit? Yeah, this is one of those. It's
-		decent enough, and the time is over. It's done. Don't touch it. Just... don't. Hide it here,
-		collapse the method... and never look at it ever... ever again. */
-		drawable.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[] {
-				1.8f, 0,    0,    0, Color.red(color),
-				0,    1.8f, 0,    0, Color.green(color),
-				0,    0,    1.8f, 0, Color.blue(color),
-				0,    0,    0,    2, 0,
-		})));
-	}
 
     public static Iterable<Fragment> All() {
         return Arrays.asList(
-		        WeaverVideoFragment,
-		        WeaverMapFragment,
-                Compass,
-                Camera,
-                Badges);
+                videoFragment,
+                mapFragment,
+                locatorFragment,
+                cameraFragment,
+                badgeFragment   );
     }
 
     public static Fragment Current() {
@@ -120,8 +105,8 @@ public class Tools {
 //            toolButtons.get(Current()).setColorFilter(Main.getResources().getColor(R.color.RyeYellow));
 //
 //        toolButtons.get(tool).setColorFilter(Main.getResources().getColor(R.color.RyeBlue));
-		if (toolButtons.keySet().contains(Tools.Current())) colorImageView(Main, toolButtons.get(Current()), R.color.RyeBlue);
-	    colorImageView(Main, toolButtons.get(tool), R.color.RyeYellow);
+		if (toolButtons.keySet().contains(Tools.Current())) colorImageView(toolButtons.get(Current()), R.color.RyeBlue);
+	    colorImageView(toolButtons.get(tool), R.color.RyeYellow);
 
         Main.getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, tool)
@@ -142,11 +127,11 @@ public class Tools {
 
     public static Fragment byName(String ToolName) {
         switch (ToolName.toLowerCase()) {
-            case "video":   return WeaverVideoFragment;
-            case "maptool": return WeaverMapFragment;
-            case "compass": return Compass;
-            case "camera":  return Camera;
-            case "badges":  return Badges;
+            case "videoFragment"    :return videoFragment   ;
+            case "mapFragment"      :return mapFragment     ;
+            case "locatorFragment"  :return locatorFragment ;
+            case "cameraFragment"   :return cameraFragment  ;
+            case "badgeFragment"    :return badgeFragment   ;
 
             default:
                 Log.e("Tools", "Tried to get non-Existent Tool" + ToolName);
@@ -168,5 +153,23 @@ public class Tools {
             this.Color = Color;
             return this;
         }
+    }
+
+    public static void colorImageView(ImageView imageView, @ColorRes int colorResId) {
+        Context c = imageView.getContext();
+        Drawable drawable = imageView.getDrawable();
+        int color = c.getResources().getColor(colorResId);
+
+		/*You know those really nasty, gross, finicky pieces of code... The ones you've waged war with f
+		for hours. Hours and hours of just tedious, fucking bullshit? Yeah, this is one of those. It's
+		decent enough, and the time is over. It's done. Don't touch it. Just... don't. Hide it here,
+		collapse the method... and never look at it ever... ever again. */
+        //http://youtu.be/euI3v2jpTlI
+        drawable.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[] {
+                1.8f, 0,    0,    0, Color.red(color),
+                0,    1.8f, 0,    0, Color.green(color),
+                0,    0,    1.8f, 0, Color.blue(color),
+                0,    0,    0,    2, 0,
+        })));
     }
 }

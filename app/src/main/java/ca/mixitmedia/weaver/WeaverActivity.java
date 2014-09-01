@@ -12,6 +12,7 @@ import ca.mixitmedia.weaver.Tools.Tools;
 public class WeaverActivity extends DrawerActivity {
 
 	boolean isDestroyed;
+    public WeaverLocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,7 @@ public class WeaverActivity extends DrawerActivity {
 
         setContentView(R.layout.activity_main);
         Tools.init(this);
+        locationManager = new WeaverLocationManager(this);
     }
 
 	@Override
