@@ -7,16 +7,21 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 
 import ca.mixitmedia.weaver.Tools.Tools;
+import ca.mixitmedia.weaver.views.BadgeData;
 
 
 public class WeaverActivity extends DrawerActivity {
 
 	boolean isDestroyed;
     public WeaverLocationManager locationManager;
-
+    public BadgeData database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        deleteDatabase("weaver_tour"); //Todo: testing!
+        database = new BadgeData(this);
 
 	    isDestroyed = false;
 

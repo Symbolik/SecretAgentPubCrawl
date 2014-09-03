@@ -1,6 +1,5 @@
 package ca.mixitmedia.weaver.Tools;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -10,7 +9,6 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import ca.mixitmedia.weaver.R;
@@ -68,8 +65,6 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
         sensorManager = (SensorManager) gcMain.getSystemService(Context.SENSOR_SERVICE);
 
         destinationProximityTextView = (TextView) view.findViewById(R.id.locator_textview);
-
-
         backgroundImageView = (ImageView) view.findViewById(R.id.locator_background);
         letterImageView= (ImageView) view.findViewById(R.id.locator_letters);
         letterImageView.setColorFilter(gcMain.getResources().getColor(R.color.RyeBlue));
@@ -77,7 +72,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
         highlightImageView.setColorFilter(gcMain.getResources().getColor(R.color.RyeYellow));
         centerImageView= (ImageView) view.findViewById(R.id.locator_center);
         arrowImageView = (ImageView) view.findViewById(R.id.locator_arrow);
-//        arrowImageView.setColorFilter(gcMain.getResources().getColor(R.color.RyeBlue));
+        arrowImageView.setColorFilter(gcMain.getResources().getColor(R.color.RyeBlue));
 
 
         destination = new Location("dummyProvider");
@@ -115,9 +110,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
         //updateDestination();
     }
 
-    /**
-     * Unregisters this fragment to pause receiving sensor data
-     */
+    //Unregisters this fragment to pause receiving sensor data
     @Override
     public void onPause() {
         sensorManager.unregisterListener(this);    //unregister listener for sensors
@@ -127,11 +120,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
 
     @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {} //stub
 
-    /**
-     * Reads the deprecated (argh!) orientation pseudo-sensor to get device heading
-     *
-     * @param event the SensorEvent object with all the data goodies
-     */
+    //Reads the deprecated (argh!) orientation pseudo-sensor to get device heading
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
@@ -140,44 +129,36 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
         }
     }
 
-    /**
-     * updates heading of the device and rotates the arrow
-     *
-     * @param newHeading the new heading, range: [0, 360), increasing clockwise from North
-     */
+    //updates heading of the device and rotates the arrow
     private void updateHeading(float newHeading) {
         newHeading = Math.round(newHeading);
         float newRelativeBearing = Math.round((newHeading - bearing + 360) % 360);
 
         // create a rotation animation (reverse turn newHeading degrees)
+        rotateImage(arrowImageView,-relativeBearing,newRelativeBearing);
+        rotateImage(highlightImageView,-relativeBearing,newRelativeBearing);
+        rotateImage(backgroundImageView,heading,newHeading);
+        rotateImage(letterImageView,heading,newHeading);
+        heading = -newHeading;
+        relativeBearing = newRelativeBearing;
+    }
+
+    private void rotateImage(ImageView image, float oldrelativeBearing, float newRelativeBearing) {
         RotateAnimation ra = new RotateAnimation(
-                -relativeBearing,
+                oldrelativeBearing,
                 newRelativeBearing,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         ra.setDuration(210);
         ra.setFillAfter(true);// set the animation after the end of the reservation status
-        arrowImageView.startAnimation(ra);
-        RotateAnimation ra2 = new RotateAnimation(
-                -relativeBearing,
-                newRelativeBearing,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-        ra2.setDuration(210);
-        ra2.setFillAfter(true);// set the animation after the end of the reservation status
-        highlightImageView.startAnimation(ra2);
-        heading = -newHeading;
-        relativeBearing = newRelativeBearing;
+        image.startAnimation(ra);
     }
 
-    /**
-     * called by the onLocationChanged of the parent MainActivity
-     *
-     * @param location of the user's device
-     */
+    //called by the onLocationChanged of the parent MainActivity
     public void onLocationChanged(Location location) {
         if (location == null || getView() == null) {
             Log.d("RF", "Locations shouldn't be null, you dun fucked up.");
+            destinationProximityTextView.setText("GPS Unavailable");
             return;
         }
         bearing = (location.bearingTo(destination) + 360) % 360;

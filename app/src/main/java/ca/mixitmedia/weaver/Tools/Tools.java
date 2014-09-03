@@ -30,8 +30,8 @@ public class Tools {
     public static WeaverVideoFragment   videoFragment   ;
     public static WeaverMapFragment     mapFragment     ;
     public static WeaverLocatorFragment locatorFragment ;
-    public static Fragment              cameraFragment  ;
-    public static Fragment              badgeFragment   ;
+    public static WeaverCameraFragment  cameraFragment  ;
+    public static WeaverBadgeFragment   badgeFragment   ;
 
     private static HashMap<Fragment, ImageView> toolButtons;
     private static WeaverActivity Main;
@@ -45,8 +45,8 @@ public class Tools {
         videoFragment   = new WeaverVideoFragment();
         mapFragment     = new WeaverMapFragment();
         locatorFragment = new WeaverLocatorFragment();
-        cameraFragment      = new TestFragment().setColor(Color.BLUE);
-        badgeFragment       = new TestFragment().setColor(Color.CYAN);
+        cameraFragment  = new WeaverCameraFragment();
+        badgeFragment   = new WeaverBadgeFragment();
 
         toolButtons = new HashMap<>();
         toolButtons.put(videoFragment       ,(ImageView) Main.findViewById(R.id.Video  ));

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageView"
+        android:layout_gravity="center_horizontal|top"
+        android:src="@drawable/badge_default"
+        android:layout_margin="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Default Badge!"
+        android:id="@+id/badge_name"
+        android:layout_gravity="center_horizontal|bottom"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="This one is a freebie!"
+        android:id="@+id/badge_desc"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Obtained on: 2014-01-01"
+        android:id="@+id/badge_date_obtained"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Kogi synth bitters, fanny pack biodiesel umami cray cred McSweeney's swag. Paleo Truffaut salvia, selfies tousled readymade fashion axe pickled raw denim cornhole cred chambray gastropub tofu. Seitan fanny pack brunch, lomo four loko crucifix Thundercats Banksy pickled Pitchfork wolf try-hard. Shoreditch ennui yr leggings roof party Carles art party. Aesthetic Odd Future PBR 3 wolf moon lo-fi Carles. Tumblr deep v whatever Odd Future High Life. Irony hella cardigan next level synth."
+        android:id="@+id/badge_blurb"
+        android:layout_gravity="center_horizontal|bottom" />
+
+</LinearLayout>
+    </ScrollView>
