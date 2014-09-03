@@ -10,6 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="60"
-        android:name="ca.mixitmedia.weaver.tools.WeaverCameraFragment$SampleCamFragment" />
+        android:name="ca.mixitmedia.weaver.Tools.WeaverCameraFragment$SampleCamFragment" />
 
 </RelativeLayout>
