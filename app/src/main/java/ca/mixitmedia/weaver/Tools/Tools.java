@@ -1,7 +1,6 @@
 package ca.mixitmedia.weaver.Tools;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -156,9 +155,8 @@ public class Tools {
     }
 
     public static void colorImageView(ImageView imageView, @ColorRes int colorResId) {
-        Context c = imageView.getContext();
         Drawable drawable = imageView.getDrawable();
-        int color = c.getResources().getColor(colorResId);
+        int color = imageView.getContext().getResources().getColor(colorResId);
 
 		/*You know those really nasty, gross, finicky pieces of code... The ones you've waged war with f
 		for hours. Hours and hours of just tedious, fucking bullshit? Yeah, this is one of those. It's
