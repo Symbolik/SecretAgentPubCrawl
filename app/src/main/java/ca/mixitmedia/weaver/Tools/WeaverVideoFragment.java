@@ -14,13 +14,12 @@ import ca.mixitmedia.weaver.R;
 public class WeaverVideoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_video_player,null);
+        View v = inflater.inflate(R.layout.fragment_video_player, null);
         getActivity().getWindow().setFormat(PixelFormat.TRANSLUCENT);
         VideoView videoHolder = (VideoView)v.findViewById(R.id.videoView);
 //if you want the controls to appear
         videoHolder.setMediaController(new MediaController(getActivity()));
-        Uri video = Uri.parse("android.resource://" + getActivity().getPackageName() + "/"
-                + R.raw.welcome); //do not add any extension
+        Uri video = Uri.parse("android.resource://"+getActivity().getPackageName()+"/"+R.raw.welcome); //do not add any extension
         videoHolder.setVideoURI(video);
         videoHolder.start();
         return v;
