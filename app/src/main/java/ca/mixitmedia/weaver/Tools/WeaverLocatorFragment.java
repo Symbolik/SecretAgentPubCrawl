@@ -35,7 +35,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
 
     SensorManager sensorManager;
     Handler handler = new Handler();
-    Runnable desinationReachedRunnable;
+    Runnable destinationReachedRunnable;
 
     /**
      * heading: The angle between magnetic north and the front of the device
@@ -85,7 +85,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
 
         Main.locationManager.setGPSUpdates(3000, 0);
 
-        desinationReachedRunnable = new Runnable()  {
+        destinationReachedRunnable = new Runnable()  {
 	        boolean backgroundFlashingState;
 	        int flashes;
             @Override
@@ -98,7 +98,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
 	                centerImageView.setColorFilter(0x33FF0000);
 	                backgroundFlashingState = true;
                 }
-	            if (flashes++ < 10) handler.postDelayed(desinationReachedRunnable, 250);
+	            if (flashes++ < 10) handler.postDelayed(destinationReachedRunnable, 250);
 	            else if (flashes == 10) {
 		            //do stuff upon arrival.
 	            }
@@ -156,8 +156,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
 
     private void rotateImage(ImageView image, float oldRelativeBearing, float newRelativeBearing) {
         RotateAnimation ra = new RotateAnimation(
-                oldRelativeBearing,
-                newRelativeBearing,
+		        oldRelativeBearing, newRelativeBearing,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         ra.setDuration(210);
@@ -192,7 +191,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
             currentDistance = ApproxDistance.THERE;
             if (approxDistance != currentDistance) {
 	            Main.locationManager.setGPSUpdates(0, 0); //0 seconds, 0 meters
-	            handler.postDelayed(desinationReachedRunnable, 250);
+	            handler.postDelayed(destinationReachedRunnable, 250);
             }
         }
         approxDistance = currentDistance;
