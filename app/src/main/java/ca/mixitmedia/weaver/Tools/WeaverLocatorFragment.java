@@ -36,6 +36,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
     SensorManager sensorManager;
     Handler handler = new Handler();
     Runnable destinationReachedRunnable;
+	boolean flashing;
 
     /**
      * heading: The angle between magnetic north and the front of the device
@@ -46,10 +47,6 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
     float heading;
     float bearing;
     float relativeBearing;
-    float proximity;
-
-    ApproxDistance approxDistance;
-    Location destination;
 
     private WeaverActivity Main;
 
@@ -78,13 +75,6 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
         arrowImageView.setColorFilter(Main.getResources().getColor(R.color.RyeBlue));
 
 
-        destination = new Location("dummyProvider");
-        destination.setLatitude(43.652202);
-        destination.setLongitude(-79.5814);
-        approxDistance = ApproxDistance.CLOSE; //TODO: why is this here?
-
-        Main.locationManager.setGPSUpdates(3000, 0);
-
         destinationReachedRunnable = new Runnable()  {
 	        boolean backgroundFlashingState;
 	        int flashes;
@@ -92,15 +82,18 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
             public void run() {
                 if (backgroundFlashingState) {
 	                centerImageView.setColorFilter(Main.getResources().getColor(R.color.RyeYellow));
+	                destinationProximityTextView.setTextColor(Main.getResources().getColor(R.color.RyeBlue));
 	                backgroundFlashingState = false;
                 }
                 else {
-	                centerImageView.setColorFilter(0x33FF0000);
+	                centerImageView.setColorFilter(R.color.RyeBlue);
+	                destinationProximityTextView.setTextColor(Main.getResources().getColor(R.color.RyeYellow));
 	                backgroundFlashingState = true;
                 }
-	            if (flashes++ < 10) handler.postDelayed(destinationReachedRunnable, 250);
-	            else if (flashes == 10) {
-		            //do stuff upon arrival.
+	            if (flashes++ < 11) handler.postDelayed(destinationReachedRunnable, 250);
+	            else if (flashes == 11) {
+		            Main.weaverLocationManager.arrivedAtDestination();
+		            flashing = false;
 	            }
             }
         };
@@ -116,8 +109,8 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
-        Main.locationManager.setGPSUpdates(0, 0);
-        Main.locationManager.setGPSStatus();
+        Main.weaverLocationManager.setGPSUpdates(0, 0);
+        Main.weaverLocationManager.setGPSStatus();
         //updateDestination();
     }
 
@@ -125,7 +118,7 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
     @Override
     public void onPause() {
         sensorManager.unregisterListener(this);    //unregister listener for sensors
-        Main.locationManager.requestSlowGPSUpdates(); //slow down gps updates
+        Main.weaverLocationManager.requestSlowGPSUpdates(); //slow down gps updates
         super.onPause();
     }
 
@@ -166,45 +159,24 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
 
     //called by the onLocationChanged of the parent MainActivity
     public void onLocationChanged(Location location) {
+	    System.out.println("onLocationChanged");
         if (location == null || getView() == null) {
             Log.d("RF", "Locations shouldn't be null, you dun fucked up.");
             destinationProximityTextView.setText("GPS Unavailable");
             return;
         }
-        bearing = (location.bearingTo(destination) + 360) % 360;
-        proximity = location.distanceTo(destination);
 
-        ApproxDistance currentDistance;
-        if (proximity >= 1000) {
-            currentDistance = ApproxDistance.FAR_FAR_AWAY;
-            if (approxDistance != currentDistance) Main.locationManager.setGPSUpdates(60000, 100); //60 seconds, 100 meters
-        } else if (proximity >= 250) {
-            currentDistance = ApproxDistance.FAR;
-            if (approxDistance != currentDistance) Main.locationManager.setGPSUpdates(30000, 25); //30 seconds, 25 meters
-        } else if (proximity >= 100) {
-            currentDistance = ApproxDistance.MEDIUM;
-            if (approxDistance != currentDistance) Main.locationManager.setGPSUpdates(10000, 10); //10 seconds, 10 meters
-        } else if (proximity >= 25) {
-            currentDistance = ApproxDistance.CLOSE;
-            if (approxDistance != currentDistance) Main.locationManager.setGPSUpdates(0, 0); //0 seconds, 0 meters
-        } else {
-            currentDistance = ApproxDistance.THERE;
-            if (approxDistance != currentDistance) {
-	            Main.locationManager.setGPSUpdates(0, 0); //0 seconds, 0 meters
-	            handler.postDelayed(destinationReachedRunnable, 250);
-            }
-        }
-        approxDistance = currentDistance;
+        bearing = (location.bearingTo(Main.weaverLocationManager.getDestination()) + 360) % 360;
 
-        destinationProximityTextView.setText("Proximity: "+Math.round(proximity)+" m");
+        destinationProximityTextView.setText("Proximity: "+Math.round(Main.weaverLocationManager.getProximity())+" m");
     }
 
-    /**
-     * An enumeration that stores the frequency with which location updates should be received.
-     * Faster updates are necessary for accuracy at close proximity, but use significantly more
-     * battery energy, and heats up the phone.
-     */
-    enum ApproxDistance {
-        THERE, CLOSE, MEDIUM, FAR, FAR_FAR_AWAY
-    }
+	public void arrivedAtDestination() {
+		if (!flashing) {
+			handler.postDelayed(destinationReachedRunnable, 250);
+			flashing = true;
+		}
+
+//		Main.cursor.;
+	}
 }

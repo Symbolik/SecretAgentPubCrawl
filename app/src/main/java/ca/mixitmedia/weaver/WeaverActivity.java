@@ -1,5 +1,6 @@
 package ca.mixitmedia.weaver;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,10 @@ import ca.mixitmedia.weaver.views.BadgeData;
 public class WeaverActivity extends DrawerActivity {
 
 	boolean isDestroyed;
-    public WeaverLocationManager locationManager;
+    public WeaverLocationManager weaverLocationManager;
     public BadgeData database;
+	public Cursor cursor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -22,13 +25,26 @@ public class WeaverActivity extends DrawerActivity {
 
         deleteDatabase("weaver_tour"); //Todo: testing!
         database = new BadgeData(this);
+	    cursor = database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null);
 
 	    isDestroyed = false;
 
         setContentView(R.layout.activity_main);
         Tools.init(this);
-        locationManager = new WeaverLocationManager(this);
+        weaverLocationManager = new WeaverLocationManager(this);
     }
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		weaverLocationManager.requestSlowGPSUpdates();
+	}
+
+	@Override
+	public void onPause() {
+		weaverLocationManager.removeUpdates();
+		super.onDestroy();
+	}
 
 	@Override
 	public void onDestroy() {

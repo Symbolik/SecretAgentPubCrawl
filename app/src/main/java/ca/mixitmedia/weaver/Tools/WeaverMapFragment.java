@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -48,14 +47,14 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 	    super.onCreateView(inflater, container, savedInstanceState);
 	    View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-		 if (mapFragment == null) {
-			 mapFragment = MapFragment.newInstance(new GoogleMapOptions()
-					 .compassEnabled(false)
-					 .rotateGesturesEnabled(false)
-					 .zoomControlsEnabled(false)
-					 .camera(CameraPosition.fromLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f)));
-		 }
-        cursor = ((WeaverActivity)getActivity()).database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null);
+		if (mapFragment == null) {
+			mapFragment = MapFragment.newInstance(new GoogleMapOptions()
+					.compassEnabled(false)
+					.rotateGesturesEnabled(false)
+					.zoomControlsEnabled(false)
+					.camera(CameraPosition.fromLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f)));
+		}
+        cursor = ((WeaverActivity) getActivity()).cursor;
 
 		getFragmentManager()
 				 .beginTransaction()
@@ -91,7 +90,7 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             addMarker(cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LATITUDE)),
                     cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LONGITUDE)),
-                    cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED))==0,
+                    cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED)) == 0,
                     cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_NAME))
                     );
         }
@@ -119,11 +118,10 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-        for(Marker m : markers.values()){
-            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center));
-        }
-		marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue)); //for testing
+//        for(Marker m : markers.values()){
+//            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center));
+//        }
+//		marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue)); //for testing
 		return false;
 	}
-
 }

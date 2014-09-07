@@ -12,26 +12,33 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import ca.mixitmedia.weaver.Tools.Tools;
 
 /**
- * Created by Dante on 2014-09-01.
+ * Created by Dante on 2014-09-01
  */
 public class WeaverLocationManager implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
     static final int GPS_SLOW_MIN_UPDATE_TIME_MS = 60000; //60 seconds
     static final int GPS_SLOW_MIN_UPDATE_DISTANCE_M = 50; //50 meters
+	int GPSMinUpdateTimeMS; //the minimal GPS update interval, in milliseconds
+	int GPSMinUpdateDistanceM; // the minimal GPS update interval, in meters.
 
     LocationManager locationManager;
     Context context;
     Location currentGPSLocation;
-    //the minimal GPS update interval, in milliseconds
-    int GPSMinUpdateTimeMS;
-    // the minimal GPS update interval, in meters.
-    int GPSMinUpdateDistanceM;
+
+	ApproxDistance approxDistance;
+	Location destination;
+	float proximity;
 
     boolean GPSStatus;
 
     public WeaverLocationManager(Context context) {
         this.context = context;
         locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
+
+
+	    destination = new Location("dummyProvider");
+	    destination.setLatitude(43.652202);
+	    destination.setLongitude(-79.5814);
     }
 
 
@@ -55,7 +62,35 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
     public void onLocationChanged(Location location) {
         currentGPSLocation = location;
         //context.experienceManager.UpdateLocation(location);
-        if (Tools.Current() == Tools.locatorFragment) Tools.locatorFragment.onLocationChanged(location);
+
+	    proximity = location.distanceTo(destination);
+
+	    ApproxDistance currentDistance;
+	    if (proximity >= 1000) {
+		    currentDistance = ApproxDistance.FAR_FAR_AWAY;
+		    if (approxDistance != currentDistance) setGPSUpdates(60000, 100); //60 seconds, 100 meters
+	    } else if (proximity >= 250) {
+		    currentDistance = ApproxDistance.FAR;
+		    if (approxDistance != currentDistance) setGPSUpdates(30000, 25); //30 seconds, 25 meters
+	    } else if (proximity >= 100) {
+		    currentDistance = ApproxDistance.MEDIUM;
+		    if (approxDistance != currentDistance) setGPSUpdates(10000, 10); //10 seconds, 10 meters
+	    } else if (proximity >= 25) {
+		    currentDistance = ApproxDistance.CLOSE;
+		    if (approxDistance != currentDistance) setGPSUpdates(0, 0); //0 seconds, 0 meters
+	    } else {
+		    currentDistance = ApproxDistance.THERE;
+		    if (approxDistance != currentDistance)  setGPSUpdates(0, 0); //0 seconds, 0 meters
+	    }
+	    approxDistance = currentDistance;
+
+        if (Tools.Current() == Tools.locatorFragment) {
+	        Tools.locatorFragment.onLocationChanged(location);
+	        if (approxDistance == ApproxDistance.CLOSE) Tools.locatorFragment.arrivedAtDestination();
+        }
+	    else {
+
+        }
     }
 
     public void setGPSStatus() {
@@ -119,4 +154,26 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
     public void onConnectionFailed(ConnectionResult connectionResult) {
         GPSStatus = false;
     }
+
+	public Location getDestination() {
+		return destination;
+	}
+
+	public float getProximity() {
+		return proximity;
+	}
+
+
+	public void arrivedAtDestination() {
+
+	}
+
+	/**
+	 * An enumeration that stores the frequency with which location updates should be received.
+	 * Faster updates are necessary for accuracy at close proximity, but use significantly more
+	 * battery energy, and heats up the phone.
+	 */
+	enum ApproxDistance {
+		THERE, CLOSE, MEDIUM, FAR, FAR_FAR_AWAY
+	}
 }
