@@ -4,12 +4,18 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import ca.mixitmedia.weaver.Tools.Tools;
+import ca.mixitmedia.weaver.Tools.WeaverLocation;
 
 /**
  * Created by Dante on 2014-09-01
@@ -21,12 +27,20 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	int GPSMinUpdateTimeMS; //the minimal GPS update interval, in milliseconds
 	int GPSMinUpdateDistanceM; // the minimal GPS update interval, in meters.
 
+	static final ArrayList<String> destinations = new ArrayList<>(Arrays.asList(
+		"Mattamy Centre (formerly Maple Leaf Gardens)",
+		"Image Arts Building (IMA)"
+		));
+
     LocationManager locationManager;
     Context context;
+
     Location currentGPSLocation;
 
+	public HashMap<String, WeaverLocation> locations = new HashMap<>();
+	int destinationIndex;
+	WeaverLocation destination;
 	ApproxDistance approxDistance;
-	Location destination;
 	float proximity;
 
     boolean GPSStatus;
@@ -36,11 +50,28 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
         locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
 
 
-	    destination = new Location("dummyProvider");
-	    destination.setLatitude(43.652202);
-	    destination.setLongitude(-79.5814);
+//	    destination = new WeaverLocation(43.652202, -79.5814, "dummy destination");
+
+	    addLocation(43.66184, -79.37991, "Mattamy Centre (formerly Maple Leaf Gardens)", R.raw.weaverguide_loc_mac);
+	    addLocation(43.65782, -79.37928, "Image Arts Building (IMA)", R.raw.weaverguide_loc_img);
+	    addLocation(43.65777, -79.38011, "Library Building (LIB)", 0);
+	    addLocation(43.65770, -79.37980, "Devonian Pond (Lake Devo)", 0);
+	    addLocation(43.65836, -79.37738, "Rogers Communication Centre (RCC)", 0);
+	    addLocation(43.65589, -79.38241, "Ted Rogers School of Management (TRSM)", 0);
+	    addLocation(43.65811, -79.37772, "Engineering and Architectural Sciences Building (ENG)", 0);
+	    addLocation(43.65689, -79.37976, "Chang School of Continuing Education", 0);
+	    addLocation(43.65863, -79.37928, "The Quad", 0);
+	    addLocation(43.65646, -79.38047, "Digital Media Zone (DMZ)", 0);
+	    addLocation(43.65806, -79.37819, "Student Campus Centre", 0);
+
+	    setDestination("Mattamy Centre (formerly Maple Leaf Gardens)");
     }
 
+	public void addLocation(double lat, double lng, String title, int videoRes) {
+		if (videoRes == 0) videoRes = R.raw.weaverguide_intro;
+		Uri videoUri = Uri.parse("android.resource://"+context.getPackageName()+"/"+videoRes);
+		locations.put(title, new WeaverLocation(lat, lng, title, videoUri));
+	}
 
     //Todo:Implement
     @Override
@@ -84,13 +115,18 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	    }
 	    approxDistance = currentDistance;
 
+
+	    if (approxDistance == ApproxDistance.THERE) {
+		    arrivedAtDestination();
+	    }
+
         if (Tools.Current() == Tools.locatorFragment) {
 	        Tools.locatorFragment.onLocationChanged(location);
-	        if (approxDistance == ApproxDistance.CLOSE) Tools.locatorFragment.arrivedAtDestination();
+	        if (approxDistance == ApproxDistance.THERE) Tools.locatorFragment.arrivedAtDestination();
         }
-	    else {
-
-        }
+	    if (Tools.Current() == Tools.mapFragment) {
+		    Tools.mapFragment.arrivedAtDestination();
+	    }
     }
 
     public void setGPSStatus() {
@@ -155,8 +191,13 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
         GPSStatus = false;
     }
 
-	public Location getDestination() {
-		return destination;
+	public WeaverLocation getDestination() {
+		return locations.get(destinations.get(destinationIndex));
+	}
+
+	public void setDestination(String title) {
+		destinationIndex = destinations.indexOf(title);
+		destination = getDestination();
 	}
 
 	public float getProximity() {
@@ -165,7 +206,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 
 	public void arrivedAtDestination() {
-
+		if (++destinationIndex >= destinations.size()) destinationIndex = destinations.size() - 1;
 	}
 
 	/**

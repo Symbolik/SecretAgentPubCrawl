@@ -1,6 +1,6 @@
 package ca.mixitmedia.weaver;
 
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,23 +16,32 @@ public class WeaverActivity extends DrawerActivity {
 	boolean isDestroyed;
     public WeaverLocationManager weaverLocationManager;
     public BadgeData database;
-	public Cursor cursor;
+//	public Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
-        deleteDatabase("weaver_tour"); //Todo: testing!
-        database = new BadgeData(this);
-	    cursor = database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null);
+	    setContentView(R.layout.activity_main);
+//	    cursor = database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null);
 
 	    isDestroyed = false;
 
-        setContentView(R.layout.activity_main);
         Tools.init(this);
         weaverLocationManager = new WeaverLocationManager(this);
+
+	    deleteDatabase("weaver_tour"); //Todo: testing!
+	    database = new BadgeData(this);
+
     }
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+//		if (intent.getAction() != null && intent.getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+//			for (Uri uri : Utils.getNdefIntentURIs(intent)) {
+//				experienceManager.UpdateLocation(uri);
+//			}
+//		}
+	}
 
 	@Override
 	public void onResume() {

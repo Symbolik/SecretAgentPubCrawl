@@ -58,19 +58,6 @@ public class Tools {
         selector2 = Main.findViewById(R.id.selector2);
 
         for(final Fragment s : toolButtons.keySet()){
-	        /* Candidates:
-	        ADD
-			DARKEN
-			DST_ATOP
-			DST_OVER
-			LIGHTEN
-			MULTIPLY
-			OVERLAY
-			SCREEN
-			SRC_ATOP
-			SRC_IN
-	         */
-//            toolButtons.get(s).setColorFilter(Main.getResources().getColor(R.color.RyeYellow), PorterDuff.Mode.SRC_IN);
 	        colorImageView(toolButtons.get(s), R.color.RyeBlue);
             toolButtons.get(s).setOnClickListener(new View.OnClickListener() {
                 @Override

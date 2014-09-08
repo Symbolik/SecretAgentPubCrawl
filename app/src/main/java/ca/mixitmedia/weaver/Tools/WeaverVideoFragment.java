@@ -19,7 +19,7 @@ public class WeaverVideoFragment extends Fragment {
         VideoView videoHolder = (VideoView)v.findViewById(R.id.videoView);
 //if you want the controls to appear
         videoHolder.setMediaController(new MediaController(getActivity()));
-        Uri video = Uri.parse("android.resource://"+getActivity().getPackageName()+"/"+R.raw.weaverguide_loc_0); //do not add any extension
+        Uri video = Uri.parse("android.resource://"+getActivity().getPackageName()+"/"+R.raw.weaverguide_intro); //do not add any extension
         videoHolder.setVideoURI(video);
         videoHolder.start();
         return v;
