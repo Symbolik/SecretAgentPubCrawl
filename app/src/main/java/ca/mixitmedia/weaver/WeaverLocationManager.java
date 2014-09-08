@@ -6,6 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -28,9 +29,9 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	int GPSMinUpdateDistanceM; // the minimal GPS update interval, in meters.
 
 	static final ArrayList<String> destinations = new ArrayList<>(Arrays.asList(
-		"Mattamy Centre (formerly Maple Leaf Gardens)",
-		"Image Arts Building (IMA)"
-		));
+			"mac",
+			"ima"
+	));
 
     LocationManager locationManager;
     Context context;
@@ -52,25 +53,26 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 //	    destination = new WeaverLocation(43.652202, -79.5814, "dummy destination");
 
-	    addLocation(43.66184, -79.37991, "Mattamy Centre (formerly Maple Leaf Gardens)", R.raw.weaverguide_loc_mac);
-	    addLocation(43.65782, -79.37928, "Image Arts Building (IMA)", R.raw.weaverguide_loc_img);
-	    addLocation(43.65777, -79.38011, "Library Building (LIB)", 0);
-	    addLocation(43.65770, -79.37980, "Devonian Pond (Lake Devo)", 0);
-	    addLocation(43.65836, -79.37738, "Rogers Communication Centre (RCC)", 0);
-	    addLocation(43.65589, -79.38241, "Ted Rogers School of Management (TRSM)", 0);
-	    addLocation(43.65811, -79.37772, "Engineering and Architectural Sciences Building (ENG)", 0);
-	    addLocation(43.65689, -79.37976, "Chang School of Continuing Education", 0);
-	    addLocation(43.65863, -79.37928, "The Quad", 0);
-	    addLocation(43.65646, -79.38047, "Digital Media Zone (DMZ)", 0);
-	    addLocation(43.65806, -79.37819, "Student Campus Centre", 0);
+	    addLocation(43.66184, -79.37991, "mac", "Mattamy Centre (formerly Maple Leaf Gardens)", R.raw.weaverguide_loc_mac);
+	    addLocation(43.65782, -79.37928, "ima", "Image Arts Building (IMA)", R.raw.weaverguide_loc_img);
+	    addLocation(43.65777, -79.38011, "lib", "Library Building (LIB)", 0);
+	    addLocation(43.65770, -79.37980, "dev", "Devonian Pond (Lake Devo)", 0);
+	    addLocation(43.65836, -79.37738, "rcc", "Rogers Communication Centre (RCC)", 0);
+	    addLocation(43.65589, -79.38241, "trs", "Ted Rogers School of Management (TRSM)", 0);
+	    addLocation(43.65811, -79.37772, "eng", "Engineering and Architectural Sciences Building (ENG)", 0);
+	    addLocation(43.65689, -79.37976, "ced", "Chang School of Continuing Education", 0);
+	    addLocation(43.65863, -79.37928, "qua", "The Quad", 0);
+	    addLocation(43.65646, -79.38047, "dmz", "Digital Media Zone (DMZ)", 0);
+	    addLocation(43.65806, -79.37819, "scc", "Student Campus Centre", 0);
 
 	    setDestination("Mattamy Centre (formerly Maple Leaf Gardens)");
     }
 
-	public void addLocation(double lat, double lng, String title, int videoRes) {
+	public void addLocation(double lat, double lng, String id, String title, int videoRes) {
 		if (videoRes == 0) videoRes = R.raw.weaverguide_intro;
 		Uri videoUri = Uri.parse("android.resource://"+context.getPackageName()+"/"+videoRes);
-		locations.put(title, new WeaverLocation(lat, lng, title, videoUri));
+
+		locations.put(id, new WeaverLocation(lat, lng, title, videoUri));
 	}
 
     //Todo:Implement
@@ -206,7 +208,24 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 
 	public void arrivedAtDestination() {
-		if (++destinationIndex >= destinations.size()) destinationIndex = destinations.size() - 1;
+		if (destinationIndex + 1 >= destinations.size()) return;
+		destinationIndex++;
+		destination = getDestination();
+	}
+
+	public void UpdateLocation(Uri uri) {
+		if (uri != null && uri.getScheme().equals("weaver") && uri.getHost().equals("ghostcatcher.mixitmedia.ca")) {
+			String[] tokens = uri.getLastPathSegment().split("\\.");
+			String type = tokens[1];
+			String id = tokens[0];
+			if (type.equals("location")) onLocationChanged(id);
+			else
+				Toast.makeText(context, "Location: " + id + " was not found", Toast.LENGTH_LONG).show();
+		} else Toast.makeText(context, "Invalid Location URL", Toast.LENGTH_LONG).show();
+	}
+
+	public void onLocationChanged(String title) {
+		onLocationChanged(locations.get(title));
 	}
 
 	/**

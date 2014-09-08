@@ -5,8 +5,6 @@ import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import ca.mixitmedia.weaver.R;
-
 /**
  * Created by Alexander on 14-09-07
  */
@@ -34,6 +32,7 @@ public class WeaverLocation extends Location {
 		setLongitude(longitude);
 
 		this.title = title;
+		this.video = video;
 	}
 
 	public LatLng asLatLng() {

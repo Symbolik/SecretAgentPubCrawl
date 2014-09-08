@@ -92,7 +92,6 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
                 }
 	            if (flashes++ < 11) handler.postDelayed(destinationReachedRunnable, 250);
 	            else if (flashes == 11) {
-		            Main.weaverLocationManager.arrivedAtDestination();
 		            flashing = false;
 	            }
             }
@@ -111,7 +110,6 @@ public class WeaverLocatorFragment extends Fragment implements SensorEventListen
                 SensorManager.SENSOR_DELAY_GAME);
         Main.weaverLocationManager.setGPSUpdates(0, 0);
         Main.weaverLocationManager.setGPSStatus();
-        //updateDestination();
     }
 
     //Unregisters this fragment to pause receiving sensor data
