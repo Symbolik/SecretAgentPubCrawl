@@ -6,6 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,7 +35,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	));
 
     LocationManager locationManager;
-    Context context;
+	WeaverActivity Main;
 
     Location currentGPSLocation;
 
@@ -46,9 +47,9 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
     boolean GPSStatus;
 
-    public WeaverLocationManager(Context context) {
-        this.context = context;
-        locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
+    public WeaverLocationManager(WeaverActivity Main) {
+        this.Main = Main;
+        locationManager = (LocationManager) this.Main.getSystemService(Context.LOCATION_SERVICE);
 
 
 //	    destination = new WeaverLocation(43.652202, -79.5814, "dummy destination");
@@ -65,12 +66,12 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	    addLocation(43.65646, -79.38047, "dmz", "Digital Media Zone (DMZ)", 0);
 	    addLocation(43.65806, -79.37819, "scc", "Student Campus Centre", 0);
 
-	    setDestination("Mattamy Centre (formerly Maple Leaf Gardens)");
+	    setDestination("mac");
     }
 
 	public void addLocation(double lat, double lng, String id, String title, int videoRes) {
 		if (videoRes == 0) videoRes = R.raw.weaverguide_intro;
-		Uri videoUri = Uri.parse("android.resource://"+context.getPackageName()+"/"+videoRes);
+		Uri videoUri = Uri.parse("android.resource://"+ Main.getPackageName()+"/"+videoRes);
 
 		locations.put(id, new WeaverLocation(lat, lng, title, videoUri));
 	}
@@ -94,7 +95,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
     @Override
     public void onLocationChanged(Location location) {
         currentGPSLocation = location;
-        //context.experienceManager.UpdateLocation(location);
+        //Main.experienceManager.UpdateLocation(location);
 
 	    proximity = location.distanceTo(destination);
 
@@ -199,6 +200,10 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 	public void setDestination(String title) {
 		destinationIndex = destinations.indexOf(title);
+		if (destinationIndex == -1) {
+			Log.e("setDestination", "invalid destination");
+			destinationIndex = 0;
+		}
 		destination = getDestination();
 	}
 
@@ -208,9 +213,14 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 
 	public void arrivedAtDestination() {
-		if (destinationIndex + 1 >= destinations.size()) return;
-		destinationIndex++;
+		Tools.videoFragment.getVideoHolder().setVideoURI(getDestination().getVideo());
+		Tools.swapTo(Tools.videoFragment);
+		Tools.videoFragment.getVideoHolder().start();
+
+		if (destinationIndex + 1 <= destinations.size()) destinationIndex = 0;
+		else destinationIndex++;
 		destination = getDestination();
+
 	}
 
 	public void UpdateLocation(Uri uri) {
@@ -220,8 +230,8 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 			String id = tokens[0];
 			if (type.equals("location")) onLocationChanged(id);
 			else
-				Toast.makeText(context, "Location: " + id + " was not found", Toast.LENGTH_LONG).show();
-		} else Toast.makeText(context, "Invalid Location URL", Toast.LENGTH_LONG).show();
+				Toast.makeText(Main, "Location: " + id + " was not found", Toast.LENGTH_LONG).show();
+		} else Toast.makeText(Main, "Invalid Location URL", Toast.LENGTH_LONG).show();
 	}
 
 	public void onLocationChanged(String title) {
