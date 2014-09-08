@@ -42,7 +42,7 @@
         android:weightSum="100"
         android:id="@+id/linearLayout"
         android:layout_above="@+id/frameLayout2"
-        android:layout_margin="20\dp">
+        android:layout_margin="20dp">
 
         <!--<ImageButton-->
             <!--android:layout_width="wrap_content"-->
