@@ -17,6 +17,7 @@ public class BadgeData extends SQLiteOpenHelper {
     public static final String COLUMN_NAME = "category";
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_COLLECTED = "collected";
+    public static final String COLUMN_AVAILABLE = "available";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
 
@@ -32,9 +33,11 @@ public class BadgeData extends SQLiteOpenHelper {
             + COLUMN_DESCRIPTION + " text not null, "
             + COLUMN_COLLECTED + " integer not null"
             + ");";
+    private Context context;
 
     public BadgeData(Context context){
         super(context, "weaver_tour", null, 1);
+        this.context = context;
 
     }
     @Override
@@ -52,7 +55,8 @@ public class BadgeData extends SQLiteOpenHelper {
         initialValues.put(COLUMN_LATITUDE, Lat);
         initialValues.put(COLUMN_LONGITUDE,Long);
         initialValues.put(COLUMN_DESCRIPTION,desc);
-        initialValues.put(COLUMN_COLLECTED, 0);
+        int video = context.getResources().getIdentifier("raw/"+alias, null, context.getPackageName());
+        initialValues.put(COLUMN_COLLECTED, (video==0?1:0));
         return initialValues;
 
     }
