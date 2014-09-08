@@ -13,6 +13,16 @@ import ca.mixitmedia.weaver.R;
 
 public class WeaverVideoFragment extends Fragment {
 
+
+    public Uri getVideoUri() {
+        return videoUri;
+    }
+
+    public void setVideoUri(Uri videoUri) {
+        this.videoUri = videoUri;
+    }
+
+    Uri videoUri;
 	VideoView videoHolder;
 	public VideoView getVideoHolder() {
 		return videoHolder;
@@ -23,14 +33,15 @@ public class WeaverVideoFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_video_player, null);
         getActivity().getWindow().setFormat(PixelFormat.TRANSLUCENT);
         videoHolder = (VideoView)v.findViewById(R.id.videoView);
-		//if you want the controls to appear
         videoHolder.setMediaController(new MediaController(getActivity()));
+        videoHolder.setVideoURI(videoUri);
+        videoHolder.start();
+		//if you want the controls to appear
         return v;
     }
 
 	public void playUri(Uri uri) {
 		Tools.swapTo(Tools.videoFragment);
-		videoHolder.setVideoURI(uri);
-		videoHolder.start();
+        setVideoUri(uri);
 	}
 }
