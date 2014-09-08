@@ -1,5 +1,6 @@
 package ca.mixitmedia.weaver;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,9 @@ public class WeaverActivity extends DrawerActivity {
 
 	boolean isDestroyed;
     public WeaverLocationManager locationManager;
-    public BadgeData database;
+    private BadgeData database;
+    public int destination;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -80,4 +83,28 @@ public class WeaverActivity extends DrawerActivity {
 	public boolean isDestroyed() {
 		return isDestroyed;
 	}
+
+    private Cursor mCursor;
+    private boolean dbWriting;
+
+
+    public Cursor readBadges() {
+
+        if ( mCursor == null || dbWriting) {
+            if (dbWriting && mCursor != null) mCursor.close();
+            mCursor = database.getReadableDatabase().rawQuery("SELECT * FROM " + BadgeData.TABLE_BADGE, null);
+            dbWriting = false;
+        }
+        mCursor.moveToPosition(0);
+        return mCursor;
+    }
+    public Cursor writeBadges() {
+        if ( mCursor == null || !dbWriting) {
+            if (!dbWriting && mCursor != null) mCursor.close();
+            mCursor = database.getReadableDatabase().rawQuery("SELECT * FROM " + BadgeData.TABLE_BADGE, null);
+            dbWriting = true;
+        }
+        mCursor.moveToPosition(0);
+        return mCursor;
+    }
 }

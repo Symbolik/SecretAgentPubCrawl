@@ -1,10 +1,14 @@
 package ca.mixitmedia.weaver.Tools;
 import android.app.Fragment;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,16 +33,22 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 
 	MapFragment mapFragment;
 	GoogleMap map;
-	HashMap<String, Marker> markers = new HashMap<>();
-    Cursor cursor;
+	HashMap<Integer, Marker> markers = new HashMap<>();
+    WeaverActivity mainActivity;
 
 	@Override
 	public void onResume() {
 		super.onResume();
+        if (getView()!=null)
 		getView().post(new Runnable() {
             @Override
             public void run() {
                 setUpMapIfNeeded();
+                Marker m = markers.get(mainActivity.destination <=0?1:mainActivity.destination);
+
+                onMarkerClick(m);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),
+                        15.5f));
             }
         });
 	}
@@ -55,7 +65,7 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 					 .zoomControlsEnabled(false)
 					 .camera(CameraPosition.fromLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f)));
 		 }
-        cursor = ((WeaverActivity)getActivity()).database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null);
+        mainActivity = ((WeaverActivity)getActivity());
 
 		getFragmentManager()
 				 .beginTransaction()
@@ -87,11 +97,12 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 	}
 
 	private void addMarkers() {
-
+        Cursor cursor = mainActivity.readBadges();
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            addMarker(cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LATITUDE)),
+            addMarker(cursor.getInt(cursor.getColumnIndex(BadgeData.COLUMN_ID)),
+                    cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LATITUDE)),
                     cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LONGITUDE)),
-                    cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED))==0,
+                    cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED))!=0,
                     cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_NAME))
                     );
         }
@@ -108,21 +119,58 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 		//addMarker(43.65806, -79.37819, true, "Student Campus Centre");
 	}
 
-	private void addMarker(double lat, double lang, boolean active, String title) {
-		markers.put(title, map.addMarker(new MarkerOptions()
+	private void addMarker(int id, double lat, double lang, boolean collected, String title) {
+		markers.put(id, map.addMarker(new MarkerOptions()
 				.title(title)
 				.position(new LatLng(lat, lang))
-				.icon(BitmapDescriptorFactory.fromResource(active ?
-						R.drawable.pin_blue_yellow_center : //if active
+				.icon(BitmapDescriptorFactory.fromResource(collected ?
+						R.drawable.pin_gray : //if active
 						R.drawable.pin_blue)))); //if !active
 	}
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-        for(Marker m : markers.values()){
-            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center));
+        Cursor cursor = mainActivity.readBadges();
+        for(final Integer m : markers.keySet()){
+            cursor.moveToPosition(m-1);
+            boolean collected = cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED))!=0;
+            markers.get(m).setIcon(
+                    BitmapDescriptorFactory.fromResource(
+                            collected ? R.drawable.pin_gray : R.drawable.pin_blue));
+
+            if(markers.get(m).getId().equals(marker.getId())){
+                View v = getView();
+                if (v!=null){
+                    cursor.moveToPosition(m-1);
+                    String alias = cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_ALIAS));
+                    String name =  cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_NAME));
+
+                    int imageResource = getResources().getIdentifier("drawable/badge_" + alias + ((collected)?"":"_shadow"), null, getActivity().getPackageName());
+                    if (imageResource == 0) imageResource = (collected)?R.drawable.badge_default:R.drawable.badge_shadow;
+                    ((ImageView)v.findViewById(R.id.map_selected_badge)).setImageResource(imageResource);
+
+                    ((TextView)v.findViewById(R.id.map_selected_location)).setText(name);
+                    CheckBox chx = ((CheckBox)v.findViewById(R.id.map_destination_checkbox));
+                    chx.setChecked(mainActivity.destination == m);
+                    chx.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(((CheckBox)view).isChecked()){
+                                mainActivity.destination = m;
+                            }else{
+                                mainActivity.destination = -1;
+                            }
+
+                        }
+                    });
+
+                }
+            }
+
         }
-		marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue)); //for testing
+		marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center)); //for testing
+
+
 		return false;
 	}
 

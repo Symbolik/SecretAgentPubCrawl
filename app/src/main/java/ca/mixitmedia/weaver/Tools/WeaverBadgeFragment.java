@@ -36,42 +36,42 @@ public class WeaverBadgeFragment extends Fragment {
         WeaverActivity weaverActivity = (WeaverActivity)getActivity();
         View v = inflater.inflate(R.layout.fragment_badges,null);
         GridView g = (GridView)v.findViewById(R.id.gridView1);
-        g.setAdapter(new Page1ListAdapter(weaverActivity,
-                weaverActivity.database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null)));
+        g.setAdapter(new Page1ListAdapter(weaverActivity));
         return v;
     }
 
     public class Page1ListAdapter extends BaseAdapter {
 
         private LayoutInflater adapterInflater;
-        public Cursor mCursor;
+
         ImageView badge;
 
-        public Page1ListAdapter(Context context, Cursor cursor) {
+        public Page1ListAdapter(Context context) {
             super();
-            mCursor = cursor;
             adapterInflater=LayoutInflater.from(context);
         }
-
+        private Cursor getCursor(){
+            return ((WeaverActivity)getActivity()).readBadges();
+        }
         @Override
         public int getCount() {
-            int i = mCursor.getCount();
+            int i = getCursor().getCount();
             return i;
         }
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            mCursor.moveToPosition(position);
+            getCursor().moveToPosition(position);
             if (convertView == null) {
                 badge = new ImageView(getActivity());
             } else {
                 badge = (ImageView) convertView;
             }
-            mCursor.moveToPosition(position);
+            getCursor().moveToPosition(position);
             badge.setAdjustViewBounds(true);
-            String alias = mCursor.getString(mCursor.getColumnIndex(BadgeData.COLUMN_ALIAS));
-            final Long collected = mCursor.getLong(mCursor.getColumnIndex(BadgeData.COLUMN_ALIAS));
-            int imageResource = getResources().getIdentifier("drawable/" + alias + ((collected == 0)?"_shadow":""), null, getActivity().getPackageName());
+            String alias = getCursor().getString(getCursor().getColumnIndex(BadgeData.COLUMN_ALIAS));
+            final Long collected = getCursor().getLong(getCursor().getColumnIndex(BadgeData.COLUMN_ALIAS));
+            int imageResource = getResources().getIdentifier("drawable/badge_" + alias + ((collected == 0)?"_shadow":""), null, getActivity().getPackageName());
             if (imageResource == 0) imageResource = (collected == 0)?R.drawable.badge_shadow:R.drawable.badge_default;
             Drawable image = getResources().getDrawable(imageResource);
             badge.setImageDrawable(image);
@@ -80,8 +80,8 @@ public class WeaverBadgeFragment extends Fragment {
             badge.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mCursor.moveToPosition(position);
-                    String name = mCursor.getString(mCursor.getColumnIndex(BadgeData.COLUMN_NAME));
+                    getCursor().moveToPosition(position);
+                    String name = getCursor().getString(getCursor().getColumnIndex(BadgeData.COLUMN_NAME));
 
                     if(collected ==0){
                         Toast.makeText(getActivity(),name,Toast.LENGTH_SHORT).show();
@@ -109,9 +109,9 @@ public class WeaverBadgeFragment extends Fragment {
 
         @Override
         public long getItemId(int position) {
-            Log.i("mCursor.getCount() --->", String.valueOf(mCursor.getCount()));
-            mCursor.moveToPosition(position);
-            long id = mCursor.getLong(0); // <--- error here
+            Log.i("mCursor.getCount() --->", String.valueOf(getCursor().getCount()));
+            getCursor().moveToPosition(position);
+            long id = getCursor().getLong(0); // <--- error here
             return id;
         }
 
