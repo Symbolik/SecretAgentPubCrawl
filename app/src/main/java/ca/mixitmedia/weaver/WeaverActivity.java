@@ -25,11 +25,7 @@ import ca.mixitmedia.weaver.views.BadgeData;
 public class WeaverActivity extends DrawerActivity {
 
 	boolean isDestroyed;
-    public WeaverLocationManager locationManager;
-    public int destination;
-
     public WeaverLocationManager weaverLocationManager;
-//	public Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +34,6 @@ public class WeaverActivity extends DrawerActivity {
 	    isDestroyed = false;
         Tools.init(this);
         weaverLocationManager = new WeaverLocationManager(this);
-
-
-//	    Uri video = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.weaverguide_intro); //do not add any extension
-//	    Tools.videoFragment.playUri(video); TODO: fix intro video
     }
 
 	@Override

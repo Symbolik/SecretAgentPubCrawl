@@ -1,9 +1,13 @@
 package ca.mixitmedia.weaver.Tools;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import ca.mixitmedia.weaver.R;
 
 /**
  * Created by Alexander on 14-09-07
@@ -27,16 +31,20 @@ public class WeaverLocation extends Location {
     }
 
     String alias;
-
+    public Uri getVideo(Context context){
+        int imageResource = context.getResources().getIdentifier("raw/weaverguide_" + alias, null, context.getPackageName());
+        if (imageResource == 0) imageResource = R.raw.weaverguide_encourage;
+        return Uri.parse("android.resource://"+context.getPackageName()+"/"+R.raw.weaverguide_intro);
+    }
     boolean collected;
     public boolean isCollected() {return collected;}
     public void setCollected(boolean collected) {this.collected = collected;}
 
-	public WeaverLocation(double latitude, double longitude, String title, String alias) {
+	public WeaverLocation(double latitude, double longitude, String title, String alias, boolean collected) {
 		super("Weaver Provider");
 		setLatitude(latitude);
 		setLongitude(longitude);
-
+        this.collected = collected;
 		this.title = title;
 		this.alias = alias;
 	}

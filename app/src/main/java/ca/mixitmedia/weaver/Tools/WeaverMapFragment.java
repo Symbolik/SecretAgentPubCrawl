@@ -40,7 +40,7 @@ public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerCli
             @Override
             public void run() {
                 setUpMapIfNeeded();
-                Marker m = markers.get(Main.locationManager.getDestination());
+                Marker m = markers.get(Main.weaverLocationManager.getDestination());
 
                 onMarkerClick(m);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),
@@ -127,14 +127,14 @@ public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerCli
 
                     ((TextView)v.findViewById(R.id.map_selected_location)).setText(name);
                     CheckBox chx = ((CheckBox)v.findViewById(R.id.map_destination_checkbox));
-                    chx.setChecked(Main.locationManager.getDestination() == m);
+                    chx.setChecked(Main.weaverLocationManager.getDestination() == m);
                     chx.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if(((CheckBox)view).isChecked()){
-                                Main.locationManager.setDestination(m.title);
+                                Main.weaverLocationManager.setDestination(m.title);
                             }else{
-                                Main.locationManager.setDestination(m.title);//TODO: TOTAL HACK, PLEASE KILL PERSON WHO WROTE THIS LINE.
+                                Main.weaverLocationManager.setDestination(m.title);//TODO: TOTAL HACK, PLEASE KILL PERSON WHO WROTE THIS LINE.
                             }
 
                         }

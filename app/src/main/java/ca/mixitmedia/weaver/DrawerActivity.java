@@ -61,14 +61,15 @@ public abstract class DrawerActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+            View top = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+            mDrawerListView = (ListView)top.findViewById(R.id.drawer_list);
             mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {selectItem(position);}
             });
             mDrawerListView.setAdapter(activity.getDrawerListAdapter());
             mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-            return mDrawerListView;
+            return top;
         }
 
         public void setUp(int fragmentId, DrawerLayout drawerLayout) {
@@ -103,8 +104,8 @@ public abstract class DrawerActivity extends Activity {
         }
 
         public void Toggle() {
-            if (mDrawerLayout.isDrawerOpen(mDrawerListView)) mDrawerLayout.closeDrawer(mDrawerListView);
-            else mDrawerLayout.openDrawer(mDrawerListView);
+            if (mDrawerLayout.isDrawerOpen(getView())) mDrawerLayout.closeDrawer(getView());
+            else mDrawerLayout.openDrawer(getView());
         }
     }
 

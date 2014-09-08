@@ -54,7 +54,7 @@ public class WeaverBadgeFragment extends Fragment {
             adapterInflater=LayoutInflater.from(context);
         }
         private WeaverLocationManager locationManager(){
-            return ((WeaverActivity)getActivity()).locationManager;
+            return ((WeaverActivity)getActivity()).weaverLocationManager;
         }
         @Override
         public int getCount() {

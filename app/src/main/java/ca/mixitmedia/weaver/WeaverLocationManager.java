@@ -60,7 +60,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	    addLocation(43.65777, -79.38011, "lib", "Library Building (LIB)", 0);
 	    addLocation(43.65770, -79.37980, "dev", "Devonian Pond (Lake Devo)", 0);
 	    addLocation(43.65836, -79.37738, "rcc", "Rogers Communication Centre (RCC)", 0);
-	    addLocation(43.65589, -79.38241, "trs", "Ted Rogers School of Management (TRSM)", R.raw.weaverguide_outro);
+	    addLocation(43.65589, -79.38241, "trs", "Ted Rogers School of Management (TRSM)", R.raw.weaverguide_trs);
 	    addLocation(43.65811, -79.37772, "eng", "Engineering and Architectural Sciences Building (ENG)", 0);
 	    addLocation(43.65689, -79.37976, "ced", "Chang School of Continuing Education", 0);
 	    addLocation(43.65863, -79.37928, "qua", "The Quad", 0);
@@ -71,10 +71,8 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
     }
 
 	public void addLocation(double lat, double lng, String id, String title, int videoRes) {
-		if (videoRes == 0) videoRes = R.raw.weaverguide_intro;
-		Uri videoUri = Uri.parse("android.resource://"+ Main.getPackageName()+"/"+videoRes);
-
-		locations.put(id, new WeaverLocation(lat, lng, title, id));
+		boolean collected = videoRes ==0;
+		locations.put(id, new WeaverLocation(lat, lng, title, id, collected));
 	}
 
     //Todo:Implement
@@ -214,7 +212,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 
 	public void arrivedAtDestination() {
-		Tools.videoFragment.playUri(getDestination().getVideo());
+		Tools.videoFragment.playUri(getDestination().getVideo(Main));
 
 		if (destinationIndex + 1 >= destinations.size()) destinationIndex = 0;
 		else destinationIndex++;
