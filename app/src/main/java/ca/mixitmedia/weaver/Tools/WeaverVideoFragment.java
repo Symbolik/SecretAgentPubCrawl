@@ -12,16 +12,36 @@ import android.widget.VideoView;
 import ca.mixitmedia.weaver.R;
 
 public class WeaverVideoFragment extends Fragment {
+
+
+    public Uri getVideoUri() {
+        return videoUri;
+    }
+
+    public void setVideoUri(Uri videoUri) {
+        this.videoUri = videoUri;
+    }
+
+    Uri videoUri;
+	VideoView videoHolder;
+	public VideoView getVideoHolder() {
+		return videoHolder;
+	}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_video_player, null);
         getActivity().getWindow().setFormat(PixelFormat.TRANSLUCENT);
-        VideoView videoHolder = (VideoView)v.findViewById(R.id.videoView);
-//if you want the controls to appear
+        videoHolder = (VideoView)v.findViewById(R.id.videoView);
         videoHolder.setMediaController(new MediaController(getActivity()));
-        Uri video = Uri.parse("android.resource://"+getActivity().getPackageName()+"/"+R.raw.weaverguide_intro); //do not add any extension
-        videoHolder.setVideoURI(video);
+        videoHolder.setVideoURI(videoUri);
         videoHolder.start();
+		//if you want the controls to appear
         return v;
     }
+
+	public void playUri(Uri uri) {
+		Tools.swapTo(Tools.videoFragment);
+        setVideoUri(uri);
+	}
 }

@@ -40,6 +40,8 @@ public class WeaverActivity extends DrawerActivity {
         weaverLocationManager = new WeaverLocationManager(this);
 
 
+//	    Uri video = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.weaverguide_intro); //do not add any extension
+//	    Tools.videoFragment.playUri(video); TODO: fix intro video
     }
 
 	@Override
