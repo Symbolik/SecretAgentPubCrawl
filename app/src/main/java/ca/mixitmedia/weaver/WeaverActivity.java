@@ -43,6 +43,8 @@ public class WeaverActivity extends DrawerActivity {
 	    deleteDatabase("weaver_tour"); //Todo: testing!
 	    database = new BadgeData(this);
 
+//	    Uri video = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.weaverguide_intro); //do not add any extension
+//	    Tools.videoFragment.playUri(video); TODO: fix intro video
     }
 
 	@Override

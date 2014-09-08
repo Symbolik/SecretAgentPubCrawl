@@ -213,11 +213,9 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 
 
 	public void arrivedAtDestination() {
-		Tools.videoFragment.getVideoHolder().setVideoURI(getDestination().getVideo());
-		Tools.swapTo(Tools.videoFragment);
-		Tools.videoFragment.getVideoHolder().start();
+		Tools.videoFragment.playUri(getDestination().getVideo());
 
-		if (destinationIndex + 1 <= destinations.size()) destinationIndex = 0;
+		if (destinationIndex + 1 >= destinations.size()) destinationIndex = 0;
 		else destinationIndex++;
 		destination = getDestination();
 
