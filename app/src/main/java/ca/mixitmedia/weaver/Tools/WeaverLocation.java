@@ -18,21 +18,27 @@ public class WeaverLocation extends Location {
 		this.title = title;
 	}
 
-	Uri video;
-	public Uri getVideo() {
-		return video;
-	}
-	public void setVideo(Uri video) {
-		this.video = video;
-	}
+    public String getAlias() {
+        return alias;
+    }
 
-	public WeaverLocation(double latitude, double longitude, String title, Uri video) {
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    String alias;
+
+    boolean collected;
+    public boolean isCollected() {return collected;}
+    public void setCollected(boolean collected) {this.collected = collected;}
+
+	public WeaverLocation(double latitude, double longitude, String title, String alias) {
 		super("Weaver Provider");
 		setLatitude(latitude);
 		setLongitude(longitude);
 
 		this.title = title;
-		this.video = video;
+		this.alias = alias;
 	}
 
 	public LatLng asLatLng() {

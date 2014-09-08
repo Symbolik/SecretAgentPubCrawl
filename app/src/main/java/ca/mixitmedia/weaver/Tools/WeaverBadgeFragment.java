@@ -21,8 +21,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import ca.mixitmedia.weaver.R;
 import ca.mixitmedia.weaver.WeaverActivity;
+import ca.mixitmedia.weaver.WeaverLocationManager;
 import ca.mixitmedia.weaver.views.BadgeData;
 
 /**
@@ -50,29 +53,28 @@ public class WeaverBadgeFragment extends Fragment {
             super();
             adapterInflater=LayoutInflater.from(context);
         }
-        private Cursor getCursor(){
-            return ((WeaverActivity)getActivity()).readBadges();
+        private WeaverLocationManager locationManager(){
+            return ((WeaverActivity)getActivity()).locationManager;
         }
         @Override
         public int getCount() {
-            int i = getCursor().getCount();
+            int i = locationManager().locations.size();
             return i;
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            getCursor().moveToPosition(position);
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final WeaverLocation loc = locationManager().locations.get(new ArrayList<>(locationManager().locations.keySet()).get(position));
             if (convertView == null) {
                 badge = new ImageView(getActivity());
             } else {
                 badge = (ImageView) convertView;
             }
-            getCursor().moveToPosition(position);
             badge.setAdjustViewBounds(true);
-            String alias = getCursor().getString(getCursor().getColumnIndex(BadgeData.COLUMN_ALIAS));
-            final Long collected = getCursor().getLong(getCursor().getColumnIndex(BadgeData.COLUMN_ALIAS));
-            int imageResource = getResources().getIdentifier("drawable/badge_" + alias + ((collected == 0)?"_shadow":""), null, getActivity().getPackageName());
-            if (imageResource == 0) imageResource = (collected == 0)?R.drawable.badge_shadow:R.drawable.badge_default;
+            String alias = loc.alias;
+            boolean collected = loc.isCollected();
+            int imageResource = getResources().getIdentifier("drawable/badge_" + alias + (!collected?"_shadow":""), null, getActivity().getPackageName());
+            if (imageResource == 0) imageResource = !collected ? R.drawable.badge_shadow:R.drawable.badge_default;
             Drawable image = getResources().getDrawable(imageResource);
             badge.setImageDrawable(image);
             //badge.setImageResource(R.drawable.badge_shadow);
@@ -80,10 +82,10 @@ public class WeaverBadgeFragment extends Fragment {
             badge.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getCursor().moveToPosition(position);
-                    String name = getCursor().getString(getCursor().getColumnIndex(BadgeData.COLUMN_NAME));
 
-                    if(collected ==0){
+                    String name = loc.title;
+
+                    if(!loc.collected){
                         Toast.makeText(getActivity(),name,Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -108,12 +110,7 @@ public class WeaverBadgeFragment extends Fragment {
         }
 
         @Override
-        public long getItemId(int position) {
-            Log.i("mCursor.getCount() --->", String.valueOf(getCursor().getCount()));
-            getCursor().moveToPosition(position);
-            long id = getCursor().getLong(0); // <--- error here
-            return id;
-        }
+        public long getItemId(int position) {return position;}
 
     }
 }

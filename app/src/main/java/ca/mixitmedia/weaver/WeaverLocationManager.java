@@ -72,7 +72,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 		if (videoRes == 0) videoRes = R.raw.weaverguide_intro;
 		Uri videoUri = Uri.parse("android.resource://"+context.getPackageName()+"/"+videoRes);
 
-		locations.put(id, new WeaverLocation(lat, lng, title, videoUri));
+		locations.put(id, new WeaverLocation(lat, lng, title, id));
 	}
 
     //Todo:Implement

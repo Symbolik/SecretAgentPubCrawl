@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,7 +25,7 @@ import java.util.HashMap;
 import ca.mixitmedia.weaver.R;
 import ca.mixitmedia.weaver.WeaverActivity;
 
-public class WeaverMapFragment extends Fragment {
+public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
 
 	WeaverActivity Main;
 	MapFragment mapFragment;
@@ -37,7 +40,7 @@ public class WeaverMapFragment extends Fragment {
             @Override
             public void run() {
                 setUpMapIfNeeded();
-                Marker m = markers.get(mainActivity.destination <=0?1:mainActivity.destination);
+                Marker m = markers.get(Main.locationManager.getDestination());
 
                 onMarkerClick(m);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),
@@ -81,7 +84,7 @@ public class WeaverMapFragment extends Fragment {
 		map = mapFragment.getMap();
 
 		refreshMapColors();
-
+        map.setOnMarkerClickListener(this);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f));
 		map.getUiSettings().setCompassEnabled(false);
 		map.getUiSettings().setRotateGesturesEnabled(false);
@@ -102,12 +105,11 @@ public class WeaverMapFragment extends Fragment {
 	public void arrivedAtDestination() {
         refreshMapColors();
     }
+
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-        Cursor cursor = mainActivity.readBadges();
-        for(final Integer m : markers.keySet()){
-            cursor.moveToPosition(m-1);
-            boolean collected = cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED))!=0;
+        for(final WeaverLocation m : markers.keySet()){
+            boolean collected = m.isCollected();
             markers.get(m).setIcon(
                     BitmapDescriptorFactory.fromResource(
                             collected ? R.drawable.pin_gray : R.drawable.pin_blue));
@@ -115,9 +117,9 @@ public class WeaverMapFragment extends Fragment {
             if(markers.get(m).getId().equals(marker.getId())){
                 View v = getView();
                 if (v!=null){
-                    cursor.moveToPosition(m-1);
-                    String alias = cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_ALIAS));
-                    String name =  cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_NAME));
+
+                    String alias = m.alias;
+                    String name =  m.title;
 
                     int imageResource = getResources().getIdentifier("drawable/badge_" + alias + ((collected)?"":"_shadow"), null, getActivity().getPackageName());
                     if (imageResource == 0) imageResource = (collected)?R.drawable.badge_default:R.drawable.badge_shadow;
@@ -125,14 +127,14 @@ public class WeaverMapFragment extends Fragment {
 
                     ((TextView)v.findViewById(R.id.map_selected_location)).setText(name);
                     CheckBox chx = ((CheckBox)v.findViewById(R.id.map_destination_checkbox));
-                    chx.setChecked(mainActivity.destination == m);
+                    chx.setChecked(Main.locationManager.getDestination() == m);
                     chx.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if(((CheckBox)view).isChecked()){
-                                mainActivity.destination = m;
+                                Main.locationManager.setDestination(m.title);
                             }else{
-                                mainActivity.destination = -1;
+                                Main.locationManager.setDestination(m.title);//TODO: TOTAL HACK, PLEASE KILL PERSON WHO WROTE THIS LINE.
                             }
 
                         }

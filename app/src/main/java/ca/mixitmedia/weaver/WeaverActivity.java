@@ -26,26 +26,19 @@ public class WeaverActivity extends DrawerActivity {
 
 	boolean isDestroyed;
     public WeaverLocationManager locationManager;
-    private BadgeData database;
     public int destination;
 
     public WeaverLocationManager weaverLocationManager;
-    public BadgeData database;
 //	public Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
-//	    cursor = database.getReadableDatabase().rawQuery("SELECT * FROM "+ BadgeData.TABLE_BADGE, null);
-
 	    isDestroyed = false;
-
         Tools.init(this);
         weaverLocationManager = new WeaverLocationManager(this);
 
-	    deleteDatabase("weaver_tour"); //Todo: testing!
-	    database = new BadgeData(this);
 
     }
 
@@ -188,28 +181,4 @@ public class WeaverActivity extends DrawerActivity {
 		}
 		return super.dispatchTouchEvent(ev);
 	}
-
-    private Cursor mCursor;
-    private boolean dbWriting;
-
-
-    public Cursor readBadges() {
-
-        if ( mCursor == null || dbWriting) {
-            if (dbWriting && mCursor != null) mCursor.close();
-            mCursor = database.getReadableDatabase().rawQuery("SELECT * FROM " + BadgeData.TABLE_BADGE, null);
-            dbWriting = false;
-        }
-        mCursor.moveToPosition(0);
-        return mCursor;
-    }
-    public Cursor writeBadges() {
-        if ( mCursor == null || !dbWriting) {
-            if (!dbWriting && mCursor != null) mCursor.close();
-            mCursor = database.getReadableDatabase().rawQuery("SELECT * FROM " + BadgeData.TABLE_BADGE, null);
-            dbWriting = true;
-        }
-        mCursor.moveToPosition(0);
-        return mCursor;
-    }
 }
