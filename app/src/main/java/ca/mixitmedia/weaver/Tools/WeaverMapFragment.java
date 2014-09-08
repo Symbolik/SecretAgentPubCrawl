@@ -1,19 +1,13 @@
 package ca.mixitmedia.weaver.Tools;
+
 import android.app.Fragment;
-import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapsInitializer;
@@ -27,14 +21,13 @@ import java.util.HashMap;
 
 import ca.mixitmedia.weaver.R;
 import ca.mixitmedia.weaver.WeaverActivity;
-import ca.mixitmedia.weaver.views.BadgeData;
 
-public class WeaverMapFragment extends Fragment implements OnMarkerClickListener {
+public class WeaverMapFragment extends Fragment {
 
+	WeaverActivity Main;
 	MapFragment mapFragment;
 	GoogleMap map;
-	HashMap<Integer, Marker> markers = new HashMap<>();
-    WeaverActivity mainActivity;
+	HashMap<WeaverLocation, Marker> markers = new HashMap<>();
 
 	@Override
 	public void onResume() {
@@ -58,25 +51,24 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 	    super.onCreateView(inflater, container, savedInstanceState);
 	    View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-		 if (mapFragment == null) {
-			 mapFragment = MapFragment.newInstance(new GoogleMapOptions()
-					 .compassEnabled(false)
-					 .rotateGesturesEnabled(false)
-					 .zoomControlsEnabled(false)
-					 .camera(CameraPosition.fromLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f)));
-		 }
-        mainActivity = ((WeaverActivity)getActivity());
-
+	    Main = (WeaverActivity) getActivity();
+		if (mapFragment == null) {
+			mapFragment = MapFragment.newInstance(new GoogleMapOptions()
+					.compassEnabled(false)
+					.rotateGesturesEnabled(false)
+					.zoomControlsEnabled(false)
+					.camera(CameraPosition.fromLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f)));
+		}
 		getFragmentManager()
 				 .beginTransaction()
 				 .add(R.id.googleMapHolder, mapFragment)
 				 .commit();
-        MapsInitializer.initialize(getActivity().getApplicationContext());
+        MapsInitializer.initialize(Main.getApplicationContext());
         return view;
     }
 
 	public void onDestroy() {
-		if (mapFragment != null && !getActivity().isDestroyed()) {
+		if (mapFragment != null && !Main.isDestroyed()) {
 			getFragmentManager()
 					.beginTransaction()
 					.remove(mapFragment)
@@ -87,47 +79,29 @@ public class WeaverMapFragment extends Fragment implements OnMarkerClickListener
 
 	private void setUpMapIfNeeded() {
 		map = mapFragment.getMap();
-			addMarkers();
-			map.setOnMarkerClickListener(this);
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f));
-			map.getUiSettings().setCompassEnabled(false);
-			map.getUiSettings().setRotateGesturesEnabled(false);
-			map.getUiSettings().setZoomControlsEnabled(false);
-			//map.setMyLocationEnabled(true);
+
+		refreshMapColors();
+
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.65863, -79.37928), 15.5f));
+		map.getUiSettings().setCompassEnabled(false);
+		map.getUiSettings().setRotateGesturesEnabled(false);
+		map.getUiSettings().setZoomControlsEnabled(false);
+		map.setMyLocationEnabled(true);
 	}
 
-	private void addMarkers() {
-        Cursor cursor = mainActivity.readBadges();
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            addMarker(cursor.getInt(cursor.getColumnIndex(BadgeData.COLUMN_ID)),
-                    cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LATITUDE)),
-                    cursor.getDouble(cursor.getColumnIndex(BadgeData.COLUMN_LONGITUDE)),
-                    cursor.getLong(cursor.getColumnIndex(BadgeData.COLUMN_COLLECTED))!=0,
-                    cursor.getString(cursor.getColumnIndex(BadgeData.COLUMN_NAME))
-                    );
-        }
-		//addMarker(43.66184, -79.37991, true, "Mattamy Centre (formerly Maple Leaf Gardens)");
-		//addMarker(43.65782, -79.37928, true, "Image Arts Building (IMA)");
-		//addMarker(43.65777, -79.38011, true, "Library Building (LIB)");
-		//addMarker(43.65770, -79.37980, true, "Devonian Pond (Lake Devo)");
-		//addMarker(43.65836, -79.37738, true, "Rogers Communication Centre (RCC)");
-		//addMarker(43.65589, -79.38241, true, "Ted Rogers School of Management (TRSM)");
-		//addMarker(43.65811, -79.37772, true, "Engineering and Architectural Sciences Building (ENG)");
-		//addMarker(43.65689, -79.37976, true, "Chang School of Continuing Education");
-		//addMarker(43.65863, -79.37928, true, "The Quad");
-		//addMarker(43.65646, -79.38047, true, "Digital Media Zone (DMZ)");
-		//addMarker(43.65806, -79.37819, true, "Student Campus Centre");
+	public void refreshMapColors() {
+		for (WeaverLocation l : Main.weaverLocationManager.locations.values()) {
+			markers.put(l, map.addMarker(new MarkerOptions()
+					.title(l.getTitle())
+					.position(l.asLatLng())
+					.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue))));
+		}
+		markers.get(Main.weaverLocationManager.getDestination()).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center));
 	}
 
-	private void addMarker(int id, double lat, double lang, boolean collected, String title) {
-		markers.put(id, map.addMarker(new MarkerOptions()
-				.title(title)
-				.position(new LatLng(lat, lang))
-				.icon(BitmapDescriptorFactory.fromResource(collected ?
-						R.drawable.pin_gray : //if active
-						R.drawable.pin_blue)))); //if !active
-	}
-
+	public void arrivedAtDestination() {
+        refreshMapColors();
+    }
 	@Override
 	public boolean onMarkerClick(Marker marker) {
         Cursor cursor = mainActivity.readBadges();

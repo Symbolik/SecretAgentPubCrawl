@@ -18,30 +18,46 @@
         android:layout_alignEnd="@+id/frameLayout2"
         android:layout_marginBottom="20dp">
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton"
-            android:layout_weight="40"
-            android:src="@drawable/bullet"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter" />
+        <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/imageButton"-->
+            <!--android:layout_weight="40"-->
+            <!--android:src="@drawable/bullet"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:scaleType="fitCenter" />-->
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/buttonPlayPause"
+			android:layout_weight="40"
+			android:text="▶"
+			android:scaleType="fitCenter"
+			android:textSize="64sp" />
 
         <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="20" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton2"
-            android:layout_weight="40"
-            android:soundEffectsEnabled="false"
-            android:src="@drawable/question_mark"
-            android:adjustViewBounds="true"
-            android:cropToPadding="false"
-            android:scaleType="fitCenter" />
+        <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/imageButton2"-->
+            <!--android:layout_weight="40"-->
+            <!--android:soundEffectsEnabled="false"-->
+            <!--android:src="@drawable/question_mark"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:cropToPadding="false"-->
+            <!--android:scaleType="fitCenter" />-->
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/buttonHelp"
+			android:layout_weight="40"
+			android:text="\?"
+			android:scaleType="fitCenter"
+			android:textSize="64sp"/>
     </LinearLayout>
 
     <FrameLayout

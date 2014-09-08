@@ -62,7 +62,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Distance: 259m"
+                    android:text="Proximity Unknown"
                     android:id="@+id/locator_textview"
                     android:gravity="center"
                     android:layout_gravity="center"
