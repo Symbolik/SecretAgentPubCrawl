@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="100">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Welcome!"
+        android:id="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_weight="20" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:id="@+id/frameLayout"
+        android:layout_above="@+id/linearLayout"
+        android:layout_below="@+id/textView2"
+        android:layout_weight="80">
+
+        <VideoView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/videoView" />
+
+    </FrameLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:weightSum="100"
-        android:layout_alignParentBottom="true"
         android:id="@+id/linearLayout"
-        android:layout_alignLeft="@+id/frameLayout2"
-        android:layout_alignStart="@+id/frameLayout2"
-        android:layout_alignRight="@+id/frameLayout2"
-        android:layout_alignEnd="@+id/frameLayout2"
-        android:layout_marginBottom="20dp">
+        android:layout_above="@+id/frameLayout2"
+        android:layout_margin="20\dp">
 
         <!--<ImageButton-->
             <!--android:layout_width="wrap_content"-->
@@ -33,7 +59,8 @@
 			android:layout_weight="40"
 			android:text="▶"
 			android:scaleType="fitCenter"
-			android:textSize="64sp" />
+			android:textSize="64sp"
+            android:background="@android:color/transparent" />
 
         <Space
             android:layout_width="0dp"
@@ -57,43 +84,15 @@
 			android:layout_weight="40"
 			android:text="\?"
 			android:scaleType="fitCenter"
-			android:textSize="64sp"/>
+			android:textSize="64sp"
+            android:background="@android:color/transparent" />
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/frameLayout"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_above="@+id/frameLayout2">
-
-        <VideoView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:id="@+id/videoView"
-            android:layout_margin="7dp" />
-
-        <ImageView
-            android:src="@drawable/corners"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="100dp"
         android:id="@+id/frameLayout2"
-        android:layout_alignRight="@+id/frameLayout"
-        android:layout_alignEnd="@+id/frameLayout"
-        android:layout_alignLeft="@+id/frameLayout"
-        android:layout_alignStart="@+id/frameLayout"
-        android:layout_above="@+id/linearLayout"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_alignParentBottom="true">
 
         <TextView
             android:layout_width="fill_parent"
@@ -101,14 +100,11 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/textView"
             android:layout_gravity="center"
-            android:background="@android:color/background_dark"
-            android:layout_margin="7dp" />
+            android:background="@color/RyeBlue"
+            android:text="To begin the tour, select a location from the map that you'd like to go to."
+            android:gravity="center"
+            android:textColor="@color/RyeYellow" />
 
-        <ImageView
-            android:src="@drawable/corners"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/imageView" />
     </FrameLayout>
 
-</RelativeLayout>
+</LinearLayout>
