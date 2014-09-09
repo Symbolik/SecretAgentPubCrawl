@@ -194,15 +194,10 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
     }
 
 	public WeaverLocation getDestination() {
-		return locations.get(destinations.get(destinationIndex));
+		return destination;
 	}
 
 	public void setDestination(WeaverLocation location) {
-		//destinationIndex = destinations.indexOf(title);
-		//if (destinationIndex == -1) {
-		//	Log.e("setDestination", "invalid destination");
-		//	destinationIndex = 0;
-		//}
 		destination = location;
 	}
 

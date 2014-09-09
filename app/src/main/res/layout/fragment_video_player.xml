@@ -11,10 +11,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Welcome!"
         android:id="@+id/textView2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:gravity="center"
         android:layout_gravity="center"
         android:layout_weight="20" />
@@ -23,8 +19,6 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:id="@+id/frameLayout"
-        android:layout_above="@+id/linearLayout"
-        android:layout_below="@+id/textView2"
         android:layout_weight="80">
 
         <VideoView
@@ -41,17 +35,7 @@
         android:layout_height="wrap_content"
         android:weightSum="100"
         android:id="@+id/linearLayout"
-        android:layout_above="@+id/frameLayout2"
         android:layout_margin="20dp">
-
-        <!--<ImageButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/imageButton"-->
-            <!--android:layout_weight="40"-->
-            <!--android:src="@drawable/bullet"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:scaleType="fitCenter" />-->
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
