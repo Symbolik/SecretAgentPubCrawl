@@ -21,7 +21,6 @@ import java.util.HashMap;
 import ca.mixitmedia.weaver.R;
 import ca.mixitmedia.weaver.WeaverActivity;
 
-
 /**
  * Created by Dante on 2014-07-27
  */
@@ -71,8 +70,6 @@ public class Tools {
         Uri videoUri = Uri.parse("android.resource://"+ Main.getPackageName()+"/"+R.raw.weaverguide_intro);
         videoFragment.playUri(videoUri);
     }
-
-
 
     public static Iterable<Fragment> All() {
         return Arrays.asList(

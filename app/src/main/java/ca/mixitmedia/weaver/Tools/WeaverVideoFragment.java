@@ -33,10 +33,9 @@ public class WeaverVideoFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_video_player, null);
         getActivity().getWindow().setFormat(PixelFormat.TRANSLUCENT);
         videoHolder = (VideoView)v.findViewById(R.id.videoView);
-        videoHolder.setMediaController(new MediaController(getActivity()));
+        //videoHolder.setMediaController(new MediaController(getActivity()));
         videoHolder.setVideoURI(videoUri);
         videoHolder.start();
-		//if you want the controls to appear
         return v;
     }
 
