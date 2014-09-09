@@ -67,7 +67,7 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 	    addLocation(43.65646, -79.38047, "dmz", "Digital Media Zone (DMZ)", 0);
 	    addLocation(43.65806, -79.37819, "scc", "Student Campus Centre", 0);
 
-	    setDestination("mac");
+	    setDestination(null);
     }
 
 	public void addLocation(double lat, double lng, String id, String title, int videoRes) {
@@ -197,13 +197,13 @@ public class WeaverLocationManager implements LocationListener, GooglePlayServic
 		return locations.get(destinations.get(destinationIndex));
 	}
 
-	public void setDestination(String title) {
-		destinationIndex = destinations.indexOf(title);
-		if (destinationIndex == -1) {
-			Log.e("setDestination", "invalid destination");
-			destinationIndex = 0;
-		}
-		destination = getDestination();
+	public void setDestination(WeaverLocation location) {
+		//destinationIndex = destinations.indexOf(title);
+		//if (destinationIndex == -1) {
+		//	Log.e("setDestination", "invalid destination");
+		//	destinationIndex = 0;
+		//}
+		destination = location;
 	}
 
 	public float getProximity() {

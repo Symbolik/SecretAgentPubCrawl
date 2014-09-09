@@ -3,14 +3,16 @@
     tools:Main=".NavigationDrawerFragment"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="false">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+        android:id="@+id/drawer_header"
         android:src="@drawable/drawer_header"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        android:clickable="true" />
 
     <ListView
     android:layout_width="match_parent"
@@ -18,7 +20,7 @@
     android:choiceMode="singleChoice"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
-    android:background="#cccc"
+    android:background="@android:color/background_light"
         android:id="@+id/drawer_list" />
 
 </LinearLayout>

@@ -132,9 +132,9 @@ public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerCli
                         @Override
                         public void onClick(View view) {
                             if(((CheckBox)view).isChecked()){
-                                Main.weaverLocationManager.setDestination(m.title);
+                                Main.weaverLocationManager.setDestination(m);
                             }else{
-                                Main.weaverLocationManager.setDestination(m.title);//TODO: TOTAL HACK, PLEASE KILL PERSON WHO WROTE THIS LINE.
+                                Main.weaverLocationManager.setDestination(null);// Murder occurred here.
                             }
 
                         }
