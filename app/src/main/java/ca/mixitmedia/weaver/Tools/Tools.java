@@ -67,9 +67,8 @@ public class Tools {
                 }
             });
         }
+        Tools.swapTo(videoFragment);
 
-        Uri videoUri = Uri.parse("android.resource://"+ Main.getPackageName()+"/"+R.raw.weaverguide_intro);
-        videoFragment.playUri(videoUri);
     }
 
 
@@ -152,7 +151,9 @@ public class Tools {
 		for hours. Hours and hours of just tedious, fucking bullshit? Yeah, this is one of those. It's
 		decent enough, and the time is over. It's done. Don't touch it. Just... don't. Hide it here,
 		collapse the method... and never look at it ever... ever again. */
-        //http://youtu.be/euI3v2jpTlI
+
+        //Dante: http://youtu.be/euI3v2jpTlI
+
         drawable.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[] {
                 1.8f, 0,    0,    0, Color.red(color),
                 0,    1.8f, 0,    0, Color.green(color),

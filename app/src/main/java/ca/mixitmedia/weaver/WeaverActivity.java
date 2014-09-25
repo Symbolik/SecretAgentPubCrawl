@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +39,12 @@ public class WeaverActivity extends DrawerActivity {
         weaverLocationManager = new WeaverLocationManager(this);
 	    isDestroyed = false;
         Tools.init(this);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Tools.videoFragment.playUri(null);
+            }
+        });
     }
 
 	@Override
@@ -85,10 +92,14 @@ public class WeaverActivity extends DrawerActivity {
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         weaverLocationManager.setDestination((WeaverLocation)LocationAdapter.getItem(position));
+        Tools.swapTo(Tools.mapFragment);
+        if(Tools.Current() == Tools.mapFragment){
+            Tools.mapFragment.simulateMarkerClick(weaverLocationManager.getDestination());
+        }
     }
 
     @Override
-    protected ListAdapter getDrawerListAdapter() {
+    protected BaseAdapter getDrawerListAdapter() {
         return LocationAdapter;
     }
 

@@ -10,7 +10,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Welcome!"
-        android:id="@+id/textView2"
+        android:id="@+id/video_title"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:gravity="center"
         android:layout_gravity="center"
         android:layout_weight="20" />
@@ -19,6 +23,8 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:id="@+id/frameLayout"
+        android:layout_above="@+id/linearLayout"
+        android:layout_below="@+id/textView2"
         android:layout_weight="80">
 
         <VideoView
@@ -32,62 +38,47 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:weightSum="100"
-        android:id="@+id/linearLayout"
-        android:layout_margin="20dp">
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/buttonPlayPause"
-			android:layout_weight="40"
-			android:text="▶"
-			android:scaleType="fitCenter"
-			android:textSize="64sp"
-            android:background="@android:color/transparent" />
+        android:id="@+id/linearLayout">
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="20" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_play_pause"
+            android:layout_weight="50"
+            android:src="@android:drawable/ic_media_play"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"/>
 
-        <!--<ImageButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/imageButton2"-->
-            <!--android:layout_weight="40"-->
-            <!--android:soundEffectsEnabled="false"-->
-            <!--android:src="@drawable/question_mark"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:cropToPadding="false"-->
-            <!--android:scaleType="fitCenter" />-->
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/buttonHelp"
-			android:layout_weight="40"
-			android:text="\?"
-			android:scaleType="fitCenter"
-			android:textSize="64sp"
-            android:background="@android:color/transparent" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_reset"
+            android:layout_weight="50"
+            android:src="@android:drawable/ic_media_previous"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"/>
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:id="@+id/frameLayout2"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content"
+        android:id="@+id/frameLayout2">
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/textView"
+            android:id="@+id/destination_box"
             android:layout_gravity="center"
             android:background="@color/RyeBlue"
             android:text="To begin the tour, select a location from the map that you'd like to go to."
             android:gravity="center"
-            android:textColor="@color/RyeYellow" />
+            android:textColor="@color/RyeYellow"
+            android:padding="10dp" />
 
     </FrameLayout>
 

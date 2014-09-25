@@ -60,7 +60,17 @@
         <activity
             android:name=".WeaverActivity"
             android:label="@string/title_activity_main"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="ghostcatcher.mixitmedia.ca"
+                    android:scheme="weaver" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

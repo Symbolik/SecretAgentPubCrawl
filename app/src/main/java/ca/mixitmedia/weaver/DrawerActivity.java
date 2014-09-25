@@ -82,12 +82,12 @@ public abstract class DrawerActivity extends Activity {
             mFragmentContainerView = getActivity().findViewById(fragmentId);
             mDrawerLayout = drawerLayout;
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-            mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
-                @Override public void onDrawerSlide(View view, float v) {/*No Op*/ }
-                @Override public void onDrawerOpened(View view) {/*Todo: Add shadow to main View.*/}
-                @Override public void onDrawerClosed(View view) {/*Todo: Remove shadow from main View.*/}
-                @Override public void onDrawerStateChanged(int i) {/*No Op*/}
-            });
+            //mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            //    @Override public void onDrawerSlide(View view, float v) {/*No Op*/ }
+            //    @Override public void onDrawerOpened(View view) {/*Todo: Add shadow to main View.*/}
+            //    @Override public void onDrawerClosed(View view) {/*Todo: Remove shadow from main View.*/}
+            //    @Override public void onDrawerStateChanged(int i) {/*No Op*/}
+            //});
         }
 
         private void selectItem(int position) {

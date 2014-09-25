@@ -54,7 +54,7 @@ public class WeaverBadgeFragment extends Fragment {
             adapterInflater=LayoutInflater.from(context);
         }
         private WeaverLocationManager locationManager(){
-            return ((WeaverActivity)getActivity()).weaverLocationManager;
+            return ((WeaverActivity)getActivity()).weaverLocationManager ;
         }
         @Override
         public int getCount() {
@@ -93,10 +93,7 @@ public class WeaverBadgeFragment extends Fragment {
                     LayoutInflater inflater = (LayoutInflater)
                             getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     PopupWindow pw = new PopupWindow(
-                            inflater.inflate(R.layout.widget_badge_popup, null, false),
-                            100,
-                            100,
-                            true);
+                            inflater.inflate(R.layout.widget_badge_popup, null, false));
                     // The code below assumes that the root container has an id called 'main'
                     pw.showAtLocation(getActivity().findViewById(R.id.fragment_container), Gravity.CENTER, 0, 0);
                 }
