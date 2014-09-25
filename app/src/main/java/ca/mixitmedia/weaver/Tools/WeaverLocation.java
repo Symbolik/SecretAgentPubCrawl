@@ -34,7 +34,7 @@ public class WeaverLocation extends Location {
     public Uri getVideo(Context context){
         int imageResource = context.getResources().getIdentifier("raw/weaverguide_" + alias, null, context.getPackageName());
         if (imageResource == 0) imageResource = R.raw.weaverguide_encourage;
-        return Uri.parse("android.resource://"+context.getPackageName()+"/"+R.raw.weaverguide_intro);
+        return Uri.parse("android.resource://"+context.getPackageName()+"/"+imageResource);
     }
     boolean collected;
     public boolean isCollected() {return collected;}

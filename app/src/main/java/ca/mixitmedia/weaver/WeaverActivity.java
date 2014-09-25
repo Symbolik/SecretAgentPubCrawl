@@ -3,6 +3,7 @@ package ca.mixitmedia.weaver;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -14,11 +15,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.zip.Inflater;
 
 import ca.mixitmedia.weaver.Tools.Tools;
+import ca.mixitmedia.weaver.Tools.WeaverLocation;
 import ca.mixitmedia.weaver.views.BadgeData;
 
 
@@ -31,9 +35,9 @@ public class WeaverActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
+        weaverLocationManager = new WeaverLocationManager(this);
 	    isDestroyed = false;
         Tools.init(this);
-        weaverLocationManager = new WeaverLocationManager(this);
     }
 
 	@Override
@@ -46,7 +50,6 @@ public class WeaverActivity extends DrawerActivity {
 		if (rawMsgs == null) return;
 		NdefMessage[] msgs = new NdefMessage[rawMsgs.length];
 		for (int i = 0; i < rawMsgs.length; i++) msgs[i] = (NdefMessage) rawMsgs[i];
-
 		weaverLocationManager.UpdateLocation(msgs[0].getRecords()[0].toUri());
 	}
 
@@ -81,34 +84,53 @@ public class WeaverActivity extends DrawerActivity {
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-
+        weaverLocationManager.setDestination((WeaverLocation)LocationAdapter.getItem(position));
+        Tools.swapTo(Tools.mapFragment);
+        if(Tools.Current() == Tools.mapFragment){
+                Tools.mapFragment.simulateMarkerClick(weaverLocationManager.getDestination());
+            }
     }
 
     @Override
-    protected ListAdapter getDrawerListAdapter() {
-        return new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return 0;
-            }
-
-            @Override
-            public Object getItem(int i) {
-                return null;
-            }
-
-            @Override
-            public long getItemId(int i) {
-                return 0;
-            }
-
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                return null;
-            }
-        };
+    protected BaseAdapter getDrawerListAdapter() {
+        return LocationAdapter;
     }
 
+    BaseAdapter LocationAdapter = new BaseAdapter() {
+        @Override
+        public int getCount() {
+            if (weaverLocationManager == null) return 0;
+            return weaverLocationManager.locations.size()+1;
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return new ArrayList<>(weaverLocationManager.locations.values()).get(i - 1);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if(i==0)return getLayoutInflater().inflate(R.layout.widget_drawer_title,null);
+            view = getLayoutInflater().inflate(R.layout.widget_drawer_item,null);
+            WeaverLocation loc = (WeaverLocation)getItem(i);
+
+            if(loc==weaverLocationManager.getDestination())
+                view.setBackgroundColor(getResources().getColor(R.color.RyeYellow));
+
+            TextView tv = (TextView) view.findViewById(R.id.drawer_loc);
+            tv.setText(loc.getTitle());
+            if( loc.isCollected()) {
+
+                tv.setTextColor(Color.GRAY);
+            }
+            return view;
+        }
+    };
 	public boolean isDestroyed() {
 		return isDestroyed;
 	}

@@ -66,9 +66,7 @@ public class Tools {
                 }
             });
         }
-
-        Uri videoUri = Uri.parse("android.resource://"+ Main.getPackageName()+"/"+R.raw.weaverguide_intro);
-        videoFragment.playUri(videoUri);
+        Tools.swapTo(Tools.videoFragment);
     }
 
     public static Iterable<Fragment> All() {

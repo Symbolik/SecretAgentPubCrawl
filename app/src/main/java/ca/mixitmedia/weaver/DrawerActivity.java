@@ -49,7 +49,7 @@ public abstract class DrawerActivity extends Activity {
             if (savedInstanceState != null) {
                 mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             }
-            selectItem(mCurrentSelectedPosition);
+            //selectItem(mCurrentSelectedPosition);
         }
 
         @Override
@@ -61,7 +61,13 @@ public abstract class DrawerActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View top = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+            top.findViewById(R.id.drawer_header).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {Toggle();
+                }
+            });
             mDrawerListView = (ListView)top.findViewById(R.id.drawer_list);
             mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
