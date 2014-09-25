@@ -1,6 +1,7 @@
 <resources>
     <color name="RyeBlue">#ff015a9c</color>
     <color name="RyeYellow">#ffEEB311</color>
+    <color name="Black">#000000</color>
     <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
     </style>
 

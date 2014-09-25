@@ -85,10 +85,14 @@ public class WeaverActivity extends DrawerActivity {
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         weaverLocationManager.setDestination((WeaverLocation)LocationAdapter.getItem(position));
+        Tools.swapTo(Tools.mapFragment);
+        if(Tools.Current() == Tools.mapFragment){
+                Tools.mapFragment.simulateMarkerClick(weaverLocationManager.getDestination());
+            }
     }
 
     @Override
-    protected ListAdapter getDrawerListAdapter() {
+    protected BaseAdapter getDrawerListAdapter() {
         return LocationAdapter;
     }
 

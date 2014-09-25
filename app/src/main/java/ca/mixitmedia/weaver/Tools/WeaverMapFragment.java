@@ -40,11 +40,8 @@ public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerCli
             @Override
             public void run() {
                 setUpMapIfNeeded();
-                Marker m = markers.get(Main.weaverLocationManager.getDestination());
-
-                onMarkerClick(m);
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),
-                        15.5f));
+                WeaverLocation loc = Main.weaverLocationManager.getDestination();
+                simulateMarkerClick(loc);
             }
         });
 	}
@@ -94,19 +91,22 @@ public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerCli
 
 	public void refreshMapColors() {
 		for (WeaverLocation l : Main.weaverLocationManager.locations.values()) {
+
+            boolean collected = l.isCollected();
 			markers.put(l, map.addMarker(new MarkerOptions()
 					.title(l.getTitle())
 					.position(l.asLatLng())
-					.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue))));
+					.icon(BitmapDescriptorFactory.fromResource(collected ? R.drawable.pin_gray : R.drawable.pin_blue))));
 		}
-		markers.get(Main.weaverLocationManager.getDestination()).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center));
-	}
+        WeaverLocation destination = Main.weaverLocationManager.getDestination();
+        if (destination!= null)
+        markers.get(destination).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.pin_blue_yellow_center));	}
 
 	public void arrivedAtDestination() {
         refreshMapColors();
     }
 
-	@Override
+    @Override
 	public boolean onMarkerClick(Marker marker) {
         for(final WeaverLocation m : markers.keySet()){
             boolean collected = m.isCollected();
@@ -149,5 +149,13 @@ public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerCli
 
 		return false;
 	}
+    public void simulateMarkerClick(WeaverLocation loc) {
+            if (loc!=null){
+                    Marker m = markers.get(loc);
+                    onMarkerClick(m);
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),
+               +                    15.5f));
+                }
+        }
 
 }
