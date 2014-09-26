@@ -27,7 +27,7 @@ import ca.mixitmedia.weaver.views.BadgeData;
 
 
 public class WeaverActivity extends DrawerActivity {
-
+    //Hello Lindsey
 	boolean isDestroyed;
     public WeaverLocationManager weaverLocationManager;
 
@@ -36,7 +36,7 @@ public class WeaverActivity extends DrawerActivity {
         super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
         weaverLocationManager = new WeaverLocationManager(this);
-	    isDestroyed = false;
+	    isDestroyed = false; //asad
         Tools.init(this);
     }
 
