@@ -37,8 +37,9 @@ public class WeaverVideoFragment extends Fragment {
         getActivity().getWindow().setFormat(PixelFormat.TRANSLUCENT);
         videoHolder = (VideoView)v.findViewById(R.id.videoView);
         videoHolder.setMediaController(new MediaController(getActivity()));
-        videoHolder.setVideoURI(videoUri);
-        videoHolder.start();
+        playUri(null);
+        //videoHolder.setVideoURI(videoUri);
+        //videoHolder.start();
 		//if you want the controls to appear
         return v;
     }
