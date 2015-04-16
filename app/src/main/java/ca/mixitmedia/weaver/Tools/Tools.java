@@ -31,6 +31,9 @@ public class Tools {
     public static WeaverLocatorFragment locatorFragment ;
     public static WeaverCameraFragment  cameraFragment  ;
     public static WeaverBadgeFragment   badgeFragment   ;
+    public static SecretAgentMiniGame minigameFragment  ;
+
+
 
     private static HashMap<Fragment, ImageView> toolButtons;
     private static WeaverActivity Main;
@@ -46,12 +49,17 @@ public class Tools {
         locatorFragment = new WeaverLocatorFragment();
         cameraFragment  = new WeaverCameraFragment();
         badgeFragment   = new WeaverBadgeFragment();
+        minigameFragment = new SecretAgentMiniGame();
+
+
+
 
         toolButtons = new HashMap<>();
         toolButtons.put(videoFragment       ,(ImageView) Main.findViewById(R.id.Video  ));
         toolButtons.put(mapFragment         ,(ImageView) Main.findViewById(R.id.LocMap ));
         toolButtons.put(locatorFragment     ,(ImageView) Main.findViewById(R.id.Compass));
-        toolButtons.put(cameraFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
+        //toolButtons.put(cameraFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
+        toolButtons.put(minigameFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
         toolButtons.put(badgeFragment       ,(ImageView) Main.findViewById(R.id.Badges ));
 
         selector1 = Main.findViewById(R.id.selector1);
@@ -74,7 +82,8 @@ public class Tools {
                 videoFragment,
                 mapFragment,
                 locatorFragment,
-                cameraFragment,
+                minigameFragment,
+                //cameraFragment,
                 badgeFragment   );
     }
 
@@ -114,7 +123,8 @@ public class Tools {
             case "videoFragment"    :return videoFragment   ;
             case "mapFragment"      :return mapFragment     ;
             case "locatorFragment"  :return locatorFragment ;
-            case "cameraFragment"   :return cameraFragment  ;
+            case "cameraFragment"   :return minigameFragment  ;
+           // case "cameraFragment"   :return cameraFragment  ;
             case "badgeFragment"    :return badgeFragment   ;
 
             default:
