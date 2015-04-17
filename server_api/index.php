@@ -12,8 +12,8 @@ require 'Slim/Slim.php';
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
-$app->get('/', function () {
-//$app = \Slim\Slim::getInstance();
+$app->get('/hello', function () {
+$app = \Slim\Slim::getInstance();
 $app->response->setStatus(200);
     echo "Hello, ";
 });
