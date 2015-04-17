@@ -10,9 +10,7 @@
 require 'Slim/Slim.php';
 //this is sundar important line
 
-//this is sundars not important line
-
-
+//This is Dante's Important line.
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
