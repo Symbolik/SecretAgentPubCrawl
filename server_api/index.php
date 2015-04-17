@@ -8,7 +8,9 @@
  * If you are using Composer, you can skip this step.
  */
 require 'Slim/Slim.php';
+//This is Dante's Not important line.
 
+//This is Dante's Important line.
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
