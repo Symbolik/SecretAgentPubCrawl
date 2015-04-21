@@ -9,7 +9,7 @@ $app = new \Slim\Slim();
 
 $app->get('/users','getUsers');
 $app->get('/updates','getUserUpdates');
-$app->get('/challenges,'getChallenges');
+$app->get('/challenges','getChallenges');
 $app->put('/users/:query','putUsers');
 $app->post('/updates','putUpdates');
 $app->post('/challenges','putChallenges');
