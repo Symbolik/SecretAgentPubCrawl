@@ -5,6 +5,7 @@ include 'db.php';
 
 $app = new \Slim\Slim();
 $app->get('/users','getUsers');
+$app->post('/users','postUsers');
 $app->get('/updates','getUserUpdates');
 $app->get('/challenges','getChallenges');
 $app->get('/dummy', 'dummyTable');
@@ -20,21 +21,58 @@ $app->run();
 
 function getUsers() {
 $sql = "CREATE TABLE `users` (
-`user_id` int(11) AUTO_INCREMENT, `username` char(10), `wins` int(100), `class` char(50),
+`user_id` int(11) AUTO_INCREMENT, `wins` int(100), `class` char(50),
 PRIMARY KEY (`user_id`)
 );";
-
+$sql = "INSERT INTO `users` (`user_id`, `class`,`wins`) VALUES (7, `bond`,50);";
+//$sql = "SELECT user_id FROM `users`;";
 
 try {
 $app = \Slim\Slim::getInstance();
 $db = getDB();
 $stmt = $db->prepare($sql);
 $stmt->execute();
+$users = $stmt->fetchAll(PDO::FETCH_OBJ);
 $db = null;
 $app->response->setStatus(200);
-echo 'Completed';
+echo "test table " . json_encode($users);
 } catch(PDOException $e) {
 echo $sql . '{"error":{"text":'. $e->getMessage() .'}}';
+}
+}
+function postUsers() {
+
+$value=rand(0,9999);
+echo $value;
+
+
+// echo $sql
+//$sql = "INSERT INTO `users` (`user_id`, `class`,`wins`) VALUES (7, `bond`,50, );";
+//$sql = "SELECT user_id FROM `users`;";
+
+try {
+$app = \Slim\Slim::getInstance();
+$db = getDB();
+
+
+    do{
+        $value=rand(0,9999);
+        $checkvalue = "SELECT user_id FROM users WHERE access_code = $value";
+
+        $stmt = $db->prepare($checkvalue);
+        $stmt->execute();
+      }while($stmt->rowCount()>0);
+
+
+$sql = "INSERT INTO `users` (`user_id`, `access_code`, `class`,`wins`) VALUES (DEFAULT, $value,NULL,0);";
+ $stmt = $db->prepare($sql);
+ $stmt->execute();
+$users = $stmt->fetchAll(PDO::FETCH_OBJ);
+$db = null;
+$app->response->setStatus(200);
+echo $value;
+} catch(PDOException $e) {
+//echo $sql . '{"error":{"text":'. $e->getMessage() .'}}';
 }
 }
 function getChallenges() {
@@ -78,10 +116,8 @@ echo $sql . '{"error":{"text":'. $e->getMessage() .'}}';
 }
 
 function dummyTable() {
-$sql = "CREATE TABLE `dummy` (
-`dummy_key` int(11) AUTO_INCREMENT,
-PRIMARY KEY (`dummy_key`)
-);";
+
+$sql = "SELECT user_id FROM users WHERE access_code = 200;";
 
 
 try {
@@ -93,6 +129,6 @@ $db = null;
 $app->response->setStatus(200);
 echo 'Completed';
 } catch(PDOException $e) {
-echo $sql . '{"error":{"text":'. $e->getMessage() .'}}';
+echo  '{"error":{"text":'. $e->getMessage() .'}}';
 }
 }
