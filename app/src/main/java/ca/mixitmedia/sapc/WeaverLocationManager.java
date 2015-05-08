@@ -1,4 +1,4 @@
-package ca.mixitmedia.weaver;
+package ca.mixitmedia.sapc;
 
 import android.content.Context;
 import android.location.Location;
@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import ca.mixitmedia.weaver.Tools.Tools;
-import ca.mixitmedia.weaver.Tools.WeaverLocation;
+import ca.mixitmedia.sapc.Tools.Tools;
+import ca.mixitmedia.sapc.Tools.WeaverLocation;
 
 /**
  * Created by Dante on 2014-09-01

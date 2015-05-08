@@ -1,4 +1,4 @@
-package ca.mixitmedia.weaver;
+package ca.mixitmedia.sapc;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,22 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.zip.Inflater;
 
-import ca.mixitmedia.weaver.Tools.Tools;
-import ca.mixitmedia.weaver.Tools.WeaverLocation;
-import ca.mixitmedia.weaver.views.BadgeData;
+import ca.mixitmedia.sapc.Tools.Tools;
+import ca.mixitmedia.sapc.Tools.WeaverLocation;
 
 
 public class WeaverActivity extends DrawerActivity {
     //Hello Lindsey
 	boolean isDestroyed;
     public WeaverLocationManager weaverLocationManager;
+    public static final String PREFS_NAME = "MyPrefsFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

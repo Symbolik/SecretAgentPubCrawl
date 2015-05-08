@@ -1,8 +1,7 @@
-package ca.mixitmedia.weaver.Tools;
+package ca.mixitmedia.sapc.Tools;
 
 import android.app.Fragment;
 import android.graphics.PixelFormat;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import ca.mixitmedia.weaver.R;
+import ca.mixitmedia.sapc.R;
 
 public class WeaverVideoFragment extends Fragment {
 

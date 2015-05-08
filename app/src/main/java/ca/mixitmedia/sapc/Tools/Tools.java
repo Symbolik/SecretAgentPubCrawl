@@ -1,11 +1,10 @@
-package ca.mixitmedia.weaver.Tools;
+package ca.mixitmedia.sapc.Tools;
 
 import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.util.Log;
@@ -18,8 +17,8 @@ import android.widget.ImageView;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import ca.mixitmedia.weaver.R;
-import ca.mixitmedia.weaver.WeaverActivity;
+import ca.mixitmedia.sapc.R;
+import ca.mixitmedia.sapc.WeaverActivity;
 
 /**
  * Created by Dante on 2014-07-27
