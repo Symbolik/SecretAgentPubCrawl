@@ -1,4 +1,4 @@
-package ca.mixitmedia.weaver.Tools;
+package ca.mixitmedia.sapc.Tools;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -22,8 +22,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 
-import ca.mixitmedia.weaver.R;
-import ca.mixitmedia.weaver.WeaverActivity;
+import ca.mixitmedia.sapc.R;
+import ca.mixitmedia.sapc.WeaverActivity;
 
 public class WeaverMapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
 

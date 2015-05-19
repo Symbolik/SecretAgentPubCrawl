@@ -1,4 +1,4 @@
-package ca.mixitmedia.weaver.Tools;
+package ca.mixitmedia.sapc.Tools;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -16,9 +16,9 @@ import android.widget.Toast;
 
 import com.wikitude.architect.ArchitectView;
 
-import ca.mixitmedia.weaver.views.AbstractArchitectCamFragmentV4;
-import ca.mixitmedia.weaver.views.WikitudeProvider;
-import ca.mixitmedia.weaver.R;
+import ca.mixitmedia.sapc.views.AbstractArchitectCamFragmentV4;
+import ca.mixitmedia.sapc.views.WikitudeProvider;
+import ca.mixitmedia.sapc.R;
 
 /**
  * Created by Dante on 2014-09-02.

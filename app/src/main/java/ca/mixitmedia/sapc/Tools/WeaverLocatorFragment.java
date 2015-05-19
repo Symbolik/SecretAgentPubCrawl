@@ -1,4 +1,4 @@
-package ca.mixitmedia.weaver.Tools;
+package ca.mixitmedia.sapc.Tools;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -18,8 +18,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ca.mixitmedia.weaver.R;
-import ca.mixitmedia.weaver.WeaverActivity;
+import ca.mixitmedia.sapc.R;
+import ca.mixitmedia.sapc.WeaverActivity;
 
 /**
  * Created by Dante on 2014-08-31

@@ -1,13 +1,12 @@
-package ca.mixitmedia.weaver.Tools;
+package ca.mixitmedia.sapc.Tools;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import ca.mixitmedia.weaver.R;
+import ca.mixitmedia.sapc.R;
 
 /**
  * Created by Alexander on 14-09-07
