@@ -8,7 +8,8 @@ $app->get('/users','getUsers');
 $app->post('/users','postUsers');
 $app->get('/users/:access_code','accessCodeData');
 $app->get('/updates','getUserUpdates');
-$app->get('/challenges','getChallenges');
+$app->get('/challenge/:access_code','getChallenges');
+$app->post('/challenge/:access_code','postChallenges');
 $app->get('/dummy', 'dummyTable');
 $app->get('/hello', function () {
 $app = \Slim\Slim::getInstance();
@@ -64,16 +65,16 @@ function postUsers(){
             }while($stmt->rowCount()>0);
 
 
-            $sql = "INSERT INTO `users` (`user_id`, `access_code`, `class`,`wins`) VALUES (DEFAULT, $value,NULL,0);";
+            $sql = "INSERT INTO `users` (`user_id`, `access_code`, `class`,`wins`) VALUES (DEFAULT,$value,NULL,0);";
             $stmt = $db->prepare($sql);
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_OBJ);
             $db = null;
             $app->response->setStatus(200);
-
+            echo $users;
 
         } catch(PDOException $e) {
-            echo ' ';
+            //echo ' ';
         }
         echo $value;
     }
@@ -100,23 +101,67 @@ echo $sql . '{"error":{"text":'. $e->getMessage() .'}}';
 }
 }
 
-function getChallenges() {
-$sql = "CREATE TABLE `challenges` (
-`challenge_id` int(11) AUTO_INCREMENT, `user_id` int(11),`user1` char(10), `user2` char(10), `button_chosen` char(100), `time` char(50),
-PRIMARY KEY (`challenge_id`), FOREIGN KEY UFK(`user_id`) references `users`
-);";
+function getChallenges($access_code) {
 
+try{
+$app = \Slim\Slim::getInstance();
+$db = getDB();
+$find_id = "SELECT `user_id` FROM `users` WHERE access_code=:access_code;";
+$stmt = $db->prepare($find_id);
+$result = $stmt->execute(array(
+   ':access_code' => $access_code
+));
+
+$users = $stmt->fetchColumn(0);
+$user_encode = json_encode($users, true);
+$returned_id=implode('', (array)$user_encode);
+
+$sql = "SELECT * FROM `challenges` WHERE user_id=$returned_id;";
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            $result= $stmt->fetchAll(PDO::FETCH_OBJ);
+            echo json_encode($result);
+$db = null;
+$app->response->setStatus(200);
+
+} catch(PDOException $e) {
+echo  '{"error":{"text":'. $e->getMessage() .'}}';
+}
+}
+
+
+function postChallenges($access_code) {
 
 try {
 $app = \Slim\Slim::getInstance();
 $db = getDB();
-$stmt = $db->prepare($sql);
-$stmt->execute();
+
+$find_id = "SELECT `user_id` FROM `users` WHERE access_code=:access_code;";
+$stmt = $db->prepare($find_id);
+$result = $stmt->execute(array(
+   ':access_code' => $access_code
+));
+
+$users = $stmt->fetchColumn(0);
+var_dump($users);
+$user_encode = json_encode($users, true);
+echo $user_encode;
+$returned_id=implode('', (array)$user_encode);
+echo $returned_id;
+//user_decode =json_decode(($user_encode));
+
+
+$sql = "INSERT INTO `challenges` (`challenge_id`,`user_id`, `from`) VALUES (DEFAULT,$returned_id,$access_code);";
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            $insertValues = $stmt->fetchAll(PDO::FETCH_OBJ);
+ echo "test table " . json_encode($insertValues);
+
 $db = null;
 $app->response->setStatus(200);
-echo 'Completed';
+
 } catch(PDOException $e) {
-echo $sql . '{"error":{"text":'. $e->getMessage() .'}}';
+echo  '{"error":{"text":'. $e->getMessage() .'}}';
 }
 }
 
