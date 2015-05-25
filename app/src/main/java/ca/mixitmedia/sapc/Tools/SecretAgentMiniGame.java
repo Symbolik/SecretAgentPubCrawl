@@ -21,6 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -36,13 +37,27 @@ import java.util.Random;
  *
  */
 public class SecretAgentMiniGame extends Fragment {
+    public enum GameItem{
+        NONE,
+        GUN,
+        INTEL,
+        POISON,
+    }
 
-    public static final String TAG = SecretAgentMiniGame.class.getSimpleName();
+    public enum CountdownTask{
+        GAME_INIT,
+        GAMEPLAY,
+        WAIT_NEXT_ROUND,
+    }
+
+    public static final String VOLLEY_TAG = SecretAgentMiniGame.class.getSimpleName();
 
     private WeaverActivity mainActivity;
-    private TextView txtview;
-    private TextView txtview2;
-    private TextView gametimerView;
+    private TextView versusTxtView;
+    private TextView gameMsgTxtView;
+    private TextView scoreview_p1;
+    private TextView scoreview_p2;
+    private TextView gametimerTxtView;
     private RequestQueue reqQueue;
     private ImageButton gunBtn;
     private ImageButton intelBtn;
@@ -50,9 +65,15 @@ public class SecretAgentMiniGame extends Fragment {
 
     private Map<String, String> params = new HashMap<String, String>();
     private CountDownTimer countdownTimer;
+
     private int agentID;
-    //private String agentID;
-    private boolean isGenerateID = false;
+    private int opponentID;
+    private GameItem selected = GameItem.NONE;
+
+    private int p1score;
+    private int p2score;
+    private int gameRound;
+    private boolean isGameOver;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,36 +83,41 @@ public class SecretAgentMiniGame extends Fragment {
         mainActivity = (WeaverActivity) getActivity();
 
         //btn = (Button) view.findViewById(R.id.button);
-        txtview = (TextView) view.findViewById(R.id.textView);
-        txtview2 = (TextView) view.findViewById(R.id.textView2);
-        gametimerView = (TextView) view.findViewById(R.id.gametimerView);
+        versusTxtView = (TextView) view.findViewById(R.id.versusTextView);
+        gameMsgTxtView = (TextView) view.findViewById(R.id.gamemsgTextView);
+        gametimerTxtView = (TextView) view.findViewById(R.id.gametimerTextView);
+        scoreview_p1 = (TextView) view.findViewById(R.id.scoretext01);
+        scoreview_p2 = (TextView) view.findViewById(R.id.scoretext02);
 
         gunBtn = (ImageButton) view.findViewById(R.id.gunButton);
         intelBtn = (ImageButton) view.findViewById(R.id.intelButton);
         poisonBtn = (ImageButton) view.findViewById(R.id.poisonButton);
+        selected = GameItem.NONE;
 
+        isGameOver=false;
+        gameRound=1;
+        p1score=0;
+        p2score=0;
+
+        //disable game buttons at the start
+        ToggleClickableItems(false);
 
         //load user preferences
-        SharedPreferences userPref = mainActivity.getSharedPreferences(WeaverActivity.PREFS_NAME, 0);
+       //SharedPreferences userPref = mainActivity.getSharedPreferences(WeaverActivity.PREFS_NAME, 0);
+
+        reqQueue = VolleySingleton.GetInstance(mainActivity.getApplicationContext()).GetRequestQueue();
+
 
         //uncomment to clear shared preferences
        // userPref.edit().clear().commit();
 
-        agentID = userPref.getInt("access_code", 999999);
+        //TODO:if this is the to_user, then these values will have to be reversed
+        agentID = mainActivity.from_usercode;
+        opponentID = mainActivity.to_usercode;
+        SetAgentText();
 
 
-        if(agentID == 999999){
-            Log.d("BN", "invalid agentID, get new ID");
-            isGenerateID = true;
-            startStringPostRequest("http://www.mixitmedia.ca/api/users");
-        }
-        else{
-            SetAgentText();
-
-        }
-
-
-
+        InitializeGameTimer();
 
 
         //handle button clicks
@@ -102,6 +128,7 @@ public class SecretAgentMiniGame extends Fragment {
                 if(v==gunBtn){
                     Log.d("BN", "View is GUN!");
                     v.setSelected(true);
+                    selected = GameItem.GUN;
                     intelBtn.setSelected(false);
                     poisonBtn.setSelected(false);
                     //startJsonGetRequest();
@@ -112,16 +139,25 @@ public class SecretAgentMiniGame extends Fragment {
                 else if(v==intelBtn){
                     Log.d("BN", "View is INTEL!");
                     v.setSelected(true);
+                    selected = GameItem.INTEL;
                     gunBtn.setSelected(false);
                     poisonBtn.setSelected(false);
-                    startStringGetRequest("http://www.mixitmedia.ca/api/users");
-                    startStringGetRequest("http://www.mixitmedia.ca/api/users/9529");
+                    //startStringGetRequest("http://www.mixitmedia.ca/api/users");
+                    //startStringGetRequest("http://www.mixitmedia.ca/api/users/9529");
+                    //startStringGetRequest("http://www.mixitmedia.ca/api/challenge/9529");
+
+
+                    String challengeUrl = "http://www.mixitmedia.ca/api/challenge/" + mainActivity.from_usercode + "/" + mainActivity.to_usercode;
+                    Log.d("BN","Challenge GET: " + challengeUrl);
+                    startStringGetRequest(challengeUrl);
+
 
                     //startJsonPostRequest();
                 }
                 else if(v==poisonBtn){
                     Log.d("BN", "View is POISON!");
                     v.setSelected(true);
+                    selected = GameItem.POISON;
                     gunBtn.setSelected(false);
                     intelBtn.setSelected(false);
                    // startStringGetRequest();
@@ -137,58 +173,10 @@ public class SecretAgentMiniGame extends Fragment {
 
         poisonBtn.setOnClickListener(clickListener);
 
-        /*
-        //code for button that has now been removed!
-        btn.setOnClickListener(new View.OnClickListener(){
-            @Override
-           public void onClick(View v){
-                txtview.setText(editTxt.getText().toString());
 
-               //startStringGetRequest("http://www.mixitmedia.ca/api/users");
-                //startJsonGetRequest("http://192.168.56.1:3000/posts/1");
-
-
-                //startJsonPostRequest("http://192.168.56.1:3000/posts");
-
-                //startStringPostRequest("http://www.mixitmedia.ca/api/users");
-                //id:4331
-
-
-                startStringGetRequest("http://www.mixitmedia.ca/api/users");
-                startStringGetRequest("http://www.mixitmedia.ca/api/challenges");
-                startStringGetRequest("http://www.mixitmedia.ca/api/location");
-                //8880
-           }
-        });*/
 
         return view;
     }
-
-
-    //Example of editing sharedpreferences
-    /*
-    @Override
-    protected void onStop(){
-       super.onStop();
-
-      // We need an Editor object to make preference changes.
-      // All objects are from android.context.Context
-      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-      SharedPreferences.Editor editor = settings.edit();
-      editor.putBoolean("silentMode", mSilentMode);
-
-      // Commit the edits!
-      editor.commit();
-    }
-    * */
-
-
-    /*
-    private void ProcessSelection(){
-        if(selection == gunBtn)
-            gunBtn.setSelected(!gunBtn.isSelected());
-
-    }*/
 
 
     @Override
@@ -211,81 +199,60 @@ public class SecretAgentMiniGame extends Fragment {
     public void onStop(){
         super.onStop();
 
+        countdownTimer = null;
         //cancel all requests
         if(reqQueue != null)
-            reqQueue.cancelAll(TAG);
+            reqQueue.cancelAll(VOLLEY_TAG);
     }
 
 
 
 
     private void startStringGetRequest(String url){
-        reqQueue = Volley.newRequestQueue(mainActivity);
-       // String url = "http://www.thomas-bayer.com/sqlrest/CUSTOMER/502";
+        reqQueue = VolleySingleton.GetInstance(mainActivity.getApplicationContext()).GetRequestQueue();
 
        //Request a string response from the provided URL.
        StringRequest stringReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
            @Override
            public void onResponse(String response){
-               //txtview2.setText("Response is: " + response);
+               //gameMsgTxtView.setText("Response is: " + response);
                Log.d("BN", response);
 
            }
        }, new Response.ErrorListener(){
            @Override
            public void onErrorResponse(VolleyError error){
-               //txtview2.setText("That didn't work!");
+               //gameMsgTxtView.setText("That didn't work!");
            }
        });
 
        //Add the request to the RequestQueue.
+       stringReq.setTag(VOLLEY_TAG);
        reqQueue.add(stringReq);
-
 
     }
 
     private void startStringPostRequest(String url){
         reqQueue = Volley.newRequestQueue(mainActivity);
-        //String url = "http://www.thomas-bayer.com/sqlrest/CUSTOMER";
-        //JSON post request
 
         StringRequest stringReq = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>(){
                     @Override
                     public void onResponse(String response) {
-                       //txtview2.setText("Response: " + response.toString());
+                       //gameMsgTxtView.setText("Response: " + response.toString());
                         Log.d("BN", "onResponse-" + response.toString());
 
-                        if(isGenerateID) {
-                            //save the agent ID
-                            SharedPreferences userPref = mainActivity.getSharedPreferences(WeaverActivity.PREFS_NAME, 0);
-                            SharedPreferences.Editor editor = userPref.edit();
 
-
-                            try{
-                                int tmp = Integer.parseInt(response);
-                                editor.putInt("access_code", Integer.parseInt(response));
-                                editor.commit();
-
-                                //get the new id from userPrefs!
-                                agentID = userPref.getInt("access_code", 999999);
-                                SetAgentText();
-
-
-                            }catch (NumberFormatException err){
-                                Log.d("BN", "Unable to parse response to Integer!");
-                            }
-                        }
 
                     }
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error){
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                VolleyLog.d(VOLLEY_TAG, "Error: " + error.getMessage());
                 Log.d("BN", "string post error: " + error.getMessage());
 
-                //txtview2.setText("BN: Response Error!");
+                //gameMsgTxtView.setText("BN: Response Error!");
             }
 
 
@@ -295,11 +262,7 @@ public class SecretAgentMiniGame extends Fragment {
             public byte[] getBody()  {
 
                String postData;
-                //don't post any new data, instead create an new empty user
-                if(isGenerateID) {
-                    Log.d("BN", "getBody NULL, new agent!");
-                    return null;
-                }
+
 
 
                 postData = "<firstname>barry</firstname>";
@@ -331,11 +294,189 @@ public class SecretAgentMiniGame extends Fragment {
 
         };
 
-        stringReq.setTag(TAG);
+        stringReq.setTag(VOLLEY_TAG);
         reqQueue.add(stringReq);
 
 
     }
+
+
+    private void SetAgentText(){
+        Log.d("BN", "valid ID was saved! agentID = " + agentID);
+        versusTxtView.setText("AGENT# " + agentID + " \nVS" + " \nAGENT# " + opponentID);
+        scoreview_p1.setText(Integer.toString(p1score));
+        scoreview_p2.setText(Integer.toString(p2score));
+
+    }
+
+
+
+    //initial wait before game starts
+    private void InitializeGameTimer(){
+        gameMsgTxtView.setText("ROUND " + gameRound + "\nGET READY!");
+        gametimerTxtView.setVisibility(View.INVISIBLE);
+        ToggleClickableItems(false);
+        gunBtn.setSelected(false);
+        intelBtn.setSelected(false);
+        poisonBtn.setSelected(false);
+        selected = GameItem.NONE;
+
+        if(countdownTimer == null) {
+
+            countdownTimer = new CountDownTimer(2200, 2200) {
+
+                public void onTick(long millisUntilFinished) {
+                }
+
+                public void onFinish() {
+                    //display win/lose message
+                    Log.d("BN", "Countdown finished");
+                    ToggleClickableItems(true);
+                    //gameMsgTxtView.setVisibility(View.INVISIBLE);
+                    gameMsgTxtView.setText("CHOOSE YOUR TACTIC!");
+                    gametimerTxtView.setVisibility(View.VISIBLE);
+                    countdownTimer = null;
+                    StartGameTimer();
+                }
+            }.start();
+        }
+    }
+
+
+
+    private void StartGameTimer(){
+
+        if(countdownTimer == null) {
+
+            //intelBtn.setVisibility(View.INVISIBLE);
+            //update ontick often otherwise timer display will lag
+            countdownTimer = new CountDownTimer(6000, 10) {
+
+                public void onTick(long millisUntilFinished) {
+                    gametimerTxtView.setText("" + millisUntilFinished / 1000);
+                }
+
+                public void onFinish() {
+                    //display win/lose message
+                    Log.d("BN", "Countdown finished");
+                    ToggleClickableItems(false);
+                    gameMsgTxtView.setVisibility(View.INVISIBLE);
+                    gametimerTxtView.setText("0");
+                    countdownTimer = null;
+                    ShowWinner();
+
+                }
+            }.start();
+        }
+    }
+
+
+    //display win/lose game message after a few seconds
+    private void ShowWinner(){
+        if(countdownTimer == null) {
+            countdownTimer = new CountDownTimer(500, 500) {
+
+                public void onTick(long millisUntilFinished) {}
+
+                public void onFinish() {
+                    //display win/lose message
+                    Log.d("BN", "Countdown finished");
+                    String winmsg;
+
+
+                    if(selected == GameItem.NONE){
+                        //winmsg = "Nothing Selected, You Were Assassinated!";
+                        p2score++;
+                        if(p2score == 3) {
+                            winmsg = "You Were Assassinated!";
+                            isGameOver = true;
+                        }
+                        else{
+                            winmsg = "Nothing Was Selected.\n Agent #" + opponentID + " Wins The Round";
+                        }
+                    }
+                    else {
+                        Random r = new Random();
+
+                        winmsg = (r.nextBoolean()) ? "Assassination Successful!" : " You Were Assassinated!";
+                        if(r.nextBoolean()){
+                            p1score++;
+                            if(p1score == 3) {
+                                winmsg = "Assassination Successful\nYou Win!";
+                                isGameOver = true;
+                            }
+                            else {
+                                winmsg = "Agent #" + agentID + " Wins The Round";
+                            }
+                        }
+                        else{
+                            p2score++;
+                            if(p2score == 3) {
+                                winmsg = "winmsg = \"You Were Assassinated!";
+                                isGameOver = true;
+                            }
+                            else {
+                                winmsg = "Agent #" + opponentID + " Wins The Round";
+                            }
+                        }
+
+                    }
+
+                    if(isGameOver) {
+                        gametimerTxtView.setVisibility(View.INVISIBLE);
+                    }
+
+                    scoreview_p1.setText(Integer.toString(p1score));
+                    scoreview_p2.setText(Integer.toString(p2score));
+
+                    gameMsgTxtView.setText(winmsg);
+                    gameMsgTxtView.setVisibility(View.VISIBLE);
+
+                    countdownTimer = null;
+                    NextRoundTimer();
+                }
+            }.start();
+        }
+    }
+
+
+    private void NextRoundTimer(){
+
+        if(countdownTimer == null) {
+
+
+            countdownTimer = new CountDownTimer(2500, 2500) {
+
+                public void onTick(long millisUntilFinished) {
+                }
+
+                public void onFinish() {
+
+
+                    countdownTimer = null;
+
+                    if(!isGameOver) {
+                        gameRound++;
+                        InitializeGameTimer();
+
+
+                    }
+
+
+                }
+            }.start();
+        }
+    }
+
+
+
+    private void ToggleClickableItems(boolean toggle){
+        gunBtn.setClickable(toggle);
+        intelBtn.setClickable(toggle);
+        poisonBtn.setClickable(toggle);
+    }
+
+
 
     private void startJsonPostRequest(String url){
         reqQueue = Volley.newRequestQueue(mainActivity);
@@ -354,7 +495,7 @@ public class SecretAgentMiniGame extends Fragment {
                 new Response.Listener<JSONObject>(){
                     @Override
                     public void onResponse(JSONObject response) {
-                        txtview2.setText("Response: " + response.toString());
+                        gameMsgTxtView.setText("Response: " + response.toString());
                         Log.d("BN", "onResponse-" + response.toString());
 
                     }
@@ -362,8 +503,8 @@ public class SecretAgentMiniGame extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error){
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                txtview2.setText("BN: Response Error! " + error.getMessage());
+                VolleyLog.d(VOLLEY_TAG, "Error: " + error.getMessage());
+                gameMsgTxtView.setText("BN: Response Error! " + error.getMessage());
             }
 
 
@@ -394,6 +535,9 @@ public class SecretAgentMiniGame extends Fragment {
 
     }
 
+
+
+
     private void startJsonGetRequest(String url){
         reqQueue = Volley.newRequestQueue(mainActivity);
        // String url = "http://jsonplaceholder.typicode.com/posts/10";
@@ -402,10 +546,10 @@ public class SecretAgentMiniGame extends Fragment {
             new Response.Listener<JSONObject>(){
                 @Override
                 public void onResponse(JSONObject response) {
-                    //txtview2.setText("Response: " + response.toString());
+                    //gameMsgTxtView.setText("Response: " + response.toString());
                     /*
                     try {
-                        txtview2.setText("Response: " + response.getString("title"));
+                        gameMsgTxtView.setText("Response: " + response.getString("title"));
                         Log.d("BN", "onResponse-" + response.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -417,9 +561,9 @@ public class SecretAgentMiniGame extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error){
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                VolleyLog.d(VOLLEY_TAG, "Error: " + error.getMessage());
                 Log.d("BN:", "JSON GET ERROR RESPONSE-" + error.getMessage());
-                //txtview2.setText("BN: JSON GET Response Error!");
+                //gameMsgTxtView.setText("BN: JSON GET Response Error!");
             }
 
 
@@ -430,61 +574,7 @@ public class SecretAgentMiniGame extends Fragment {
     }
 
 
-    private void SetAgentText(){
-        Log.d("BN", "valid ID was saved! agentID = " + agentID);
-        txtview.setText("AGENT# " + agentID);
-        StartGameTimer();
 
-    }
-
-    private void StartGameTimer(){
-        if(countdownTimer == null) {
-
-            //intelBtn.setVisibility(View.INVISIBLE);
-            countdownTimer = new CountDownTimer(4000, 100) {
-
-                public void onTick(long millisUntilFinished) {
-                    gametimerView.setText("" + millisUntilFinished / 1000);
-                    Log.d("BN", "gametime: " + millisUntilFinished/1000 + ", " + millisUntilFinished);
-                }
-
-                public void onFinish() {
-                    //display win/lose message
-                    Log.d("BN", "Countdown finished");
-                    //intelBtn.setVisibility(View.VISIBLE);
-                    gametimerView.setText("0");
-                    countdownTimer = null;
-                    ShowWinner();
-
-                }
-            }.start();
-        }
-    }
-
-
-    //display win/lose game message after a few seconds
-    private void ShowWinner(){
-        if(countdownTimer == null) {
-            countdownTimer = new CountDownTimer(500, 500) {
-
-                public void onTick(long millisUntilFinished) {}
-
-                public void onFinish() {
-                    //display win/lose message
-                    Log.d("BN", "Countdown finished");
-                    //intelBtn.setVisibility(View.VISIBLE);
-
-                    Random r = new Random();
-
-                    String winmsg = (r.nextBoolean())?"Assassination Successful!":" You Were Assassinated!";
-
-                    gametimerView.setText(winmsg);
-                    countdownTimer = null;
-
-                }
-            }.start();
-        }
-    }
 
 
 

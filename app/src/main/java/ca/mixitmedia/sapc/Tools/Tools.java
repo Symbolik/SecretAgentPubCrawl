@@ -1,6 +1,7 @@
 package ca.mixitmedia.sapc.Tools;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -31,7 +32,7 @@ public class Tools {
     public static WeaverCameraFragment  cameraFragment  ;
     public static WeaverBadgeFragment   badgeFragment   ;
     public static SecretAgentMiniGame minigameFragment  ;
-
+    public static MinigameConnectFragment minigameConnectFragment;
 
 
     private static HashMap<Fragment, ImageView> toolButtons;
@@ -49,6 +50,7 @@ public class Tools {
         cameraFragment  = new WeaverCameraFragment();
         badgeFragment   = new WeaverBadgeFragment();
         minigameFragment = new SecretAgentMiniGame();
+        minigameConnectFragment = new MinigameConnectFragment();
 
 
 
@@ -57,8 +59,11 @@ public class Tools {
         toolButtons.put(videoFragment       ,(ImageView) Main.findViewById(R.id.Video  ));
         toolButtons.put(mapFragment         ,(ImageView) Main.findViewById(R.id.LocMap ));
         toolButtons.put(locatorFragment     ,(ImageView) Main.findViewById(R.id.Compass));
+
+        toolButtons.put(minigameConnectFragment, (ImageView)Main.findViewById(R.id.Camera));
         //toolButtons.put(cameraFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
-        toolButtons.put(minigameFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
+        //toolButtons.put(minigameFragment      ,(ImageView) Main.findViewById(R.id.Camera ));
+
         toolButtons.put(badgeFragment       ,(ImageView) Main.findViewById(R.id.Badges ));
 
         selector1 = Main.findViewById(R.id.selector1);
@@ -81,7 +86,8 @@ public class Tools {
                 videoFragment,
                 mapFragment,
                 locatorFragment,
-                minigameFragment,
+                minigameConnectFragment,
+                //minigameFragment,
                 //cameraFragment,
                 badgeFragment   );
     }
@@ -89,6 +95,9 @@ public class Tools {
     public static Fragment Current() {
         return Main.getFragmentManager().findFragmentById(R.id.fragment_container);
     }
+
+
+
 
     public static void swapTo(Fragment tool){
         if (Tools.Current() == tool) return;
@@ -106,7 +115,25 @@ public class Tools {
         refreshSelector(tool);
     }
 
+    //swap fragments without toolbuttons stuff, used for minigame screens
+    public static void directlySwapTo(Fragment tool){
+        if (Tools.Current() == tool) return;
+
+        //Main.getFragmentManager().beginTransaction().remove(Tools.Current()).add(R.id.fragment_container,tool).commit();
+
+        Main.getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .replace(R.id.fragment_container, tool)
+                .commit();
+
+
+
+    }
+
     public static void refreshSelector(Fragment tool){
+
+        if(tool == minigameFragment)
+            return;
+
         ImageView v = toolButtons.get(tool);
         int width = v.getWidth();
         float x = v.getX();
@@ -123,6 +150,9 @@ public class Tools {
             case "mapFragment"      :return mapFragment     ;
             case "locatorFragment"  :return locatorFragment ;
             case "cameraFragment"   :return minigameFragment  ;
+            //case "cameraFragment"   :return minigameFragment  ;
+            case "minigameConnectFragment" : return minigameConnectFragment;
+            case "minigameFragment" : return minigameFragment;
            // case "cameraFragment"   :return cameraFragment  ;
             case "badgeFragment"    :return badgeFragment   ;
 

@@ -27,7 +27,12 @@ public class WeaverActivity extends DrawerActivity {
     //Hello Lindsey
 	boolean isDestroyed;
     public WeaverLocationManager weaverLocationManager;
+
+    //minigame vars
     public static final String PREFS_NAME = "MyPrefsFile";
+    public int from_usercode = 0;
+    public int to_usercode = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
