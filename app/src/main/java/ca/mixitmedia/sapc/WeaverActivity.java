@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,6 +30,8 @@ public class WeaverActivity extends DrawerActivity {
     public WeaverLocationManager weaverLocationManager;
 
     //minigame vars
+
+    public static CountDownTimer countdownTimer;
     public static final String PREFS_NAME = "MyPrefsFile";
     public int from_usercode = 0;
     public int to_usercode = 0;

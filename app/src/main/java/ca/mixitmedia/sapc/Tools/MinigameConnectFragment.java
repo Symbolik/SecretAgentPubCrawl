@@ -36,13 +36,20 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
     }
     private RequestQueue reqQueue;
     private WeaverActivity mainActivity;
-    private Spinner [] spinners;
-    private Spinner spinner01;
+    //private Spinner [] spinners;
+    //private Spinner spinner01;
     private Button challengeBtn;
-    private ArrayAdapter<CharSequence> adapter;
+    private Button backspaceBtn;
+    private Button [] numpad;
+    private TextView [] usercodeNumbers;
+
+    //private ArrayAdapter<CharSequence> adapter;
     private SharedPreferences userPrefs;
     private TextView txtview;
     private int toUserCode;
+    private int curNum;
+
+
 
     private boolean isValidUser = false;
     //wait until HTTP response is recieved before swapping fragment
@@ -76,7 +83,8 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
 
         }
 
-
+        //spinner code, no longer being used
+        /*
         int [] spinnerIds = {R.id.usercode_spinner1, R.id.usercode_spinner2, R.id.usercode_spinner3, R.id.usercode_spinner4};
         spinners = new Spinner[4];
 
@@ -87,9 +95,8 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
 
         for(int i = 0; i < spinners.length;i++){
             spinners[i] = (Spinner) view.findViewById(spinnerIds[i]);
+
             //use string resource array and apply a default layout for the spinner
-
-
             spinners[i].setAdapter(adapter);
 
 
@@ -98,37 +105,85 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
             spinners[i].setSelection(0);
 
             //spinners[i].setOnItemSelectedListener(this);
+        }*/
+
+        curNum = 0;
+        challengeBtn = (Button) view.findViewById(R.id.challengeBtn);
+        backspaceBtn = (Button) view.findViewById(R.id.backspacebtn);
+
+        usercodeNumbers = new TextView[4];
+        usercodeNumbers[0] = (TextView) view.findViewById(R.id.usercode_num1);
+        usercodeNumbers[1] = (TextView) view.findViewById(R.id.usercode_num2);
+        usercodeNumbers[2] = (TextView) view.findViewById(R.id.usercode_num3);
+        usercodeNumbers[3] = (TextView) view.findViewById(R.id.usercode_num4);
+
+
+
+
+        int [] buttonIDs = {R.id.zerobtn, R.id.onebtn, R.id.twobtn,
+                             R.id.threebtn, R.id.fourbtn, R.id.fivebtn,
+                             R.id.sixbtn, R.id.sevenbtn, R.id.eightbtn, R.id.ninebtn};
+
+        numpad = new Button[10];
+
+
+        for(int i = 0; i < buttonIDs.length;i++){
+           numpad[i] = (Button) view.findViewById(buttonIDs[i]);
+
+            numpad[i].setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v){
+                    Button tmpBtn = (Button) v;
+                    usercodeNumbers[curNum].setText(((Button) v).getText());
+                    if(curNum < 3)
+                        curNum++;
+                }
+            });
+
         }
 
-        challengeBtn = (Button) view.findViewById(R.id.challenge_button);
+        backspaceBtn.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(curNum > 0){
+                    if(curNum == usercodeNumbers.length-1 && !usercodeNumbers[curNum].getText().equals("")){
+                        usercodeNumbers[curNum].setText("");
+                    }
+                    else {
+                        curNum--;
+                        usercodeNumbers[curNum].setText("");
+                    }
+                }
+            }
+        });
+
 
         challengeBtn.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 //TODO: don't attempt to challenge if the user didn't get an access code, warning msg: this requires internet connection
 
-                StringBuilder sb = new StringBuilder(spinners[0].getSelectedItem().toString())
-                        .append(spinners[1].getSelectedItem().toString())
-                        .append(spinners[2].getSelectedItem().toString())
-                        .append(spinners[3].getSelectedItem().toString());
+                StringBuilder sb = new StringBuilder(usercodeNumbers[0].getText().toString())
+                        .append(usercodeNumbers[1].getText())
+                        .append(usercodeNumbers[2].getText())
+                        .append(usercodeNumbers[3].getText());
 
                 //convert the values from the spinners into an integer
+
+               //handle if nothing was entered
+                if(sb.toString().equals("")){
+                    sb.append("0");
+                }
+
                 toUserCode = Integer.valueOf(sb.toString());
 
                 //verify that the entered to_usercode exists
-                startStringGetRequest("http://www.mixitmedia.ca/api/users/"+toUserCode);
-
-                //send POST HTTP Request with usercode that was entered, wait for response
-                /*String challengeUrl = "http://www.mixitmedia.ca/api/challenge/" + mainActivity.from_usercode + "/" + toUserCode;
-                Log.d("BN","Challenge POST: " + challengeUrl);
-                startStringPostRequest(challengeUrl, POST_MODE.CHALLENGE);
-                */
+                //startStringGetRequest("http://www.mixitmedia.ca/api/users/"+toUserCode);
 
 
 
 
-                //TODO:FOR OFFLINE DEBUG TESTING ONLY, don't swap until challenge has been accepted
+                //FOR OFFLINE DEBUG TESTING ONLY, don't swap until challenge has been accepted
                 //swap with minigame fragment
-                //Tools.directlySwapTo(Tools.minigameFragment);
+                mainActivity.to_usercode = toUserCode;
+                Tools.directlySwapTo(Tools.minigameFragment);
             }
         });
 
@@ -138,9 +193,6 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
 
 
     private void startStringPostRequest(String url, final POST_MODE postMode){
-       // reqQueue = VolleySingleton.GetInstance(mainActivity.getApplicationContext()).GetRequestQueue();
-
-
         StringRequest stringReq = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>(){
                     @Override
@@ -241,7 +293,7 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
     }
 
     @Override

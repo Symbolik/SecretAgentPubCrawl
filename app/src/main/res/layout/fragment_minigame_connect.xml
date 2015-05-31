@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -25,6 +27,81 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <View
+        android:id="@+id/anchor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="80dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="42dp"
+        android:layout_height="60dp"
+        android:id="@+id/usercode_num2"
+        android:background="#ffffff"
+        android:layout_marginTop="120dp"
+        android:layout_marginRight="4dp"
+        android:layout_toLeftOf="@id/anchor"
+        android:text=""
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:layout_width="42dp"
+        android:layout_height="60dp"
+        android:id="@+id/usercode_num1"
+        android:spinnerMode="dropdown"
+        android:background="#ffffff"
+        android:layout_marginTop="120dp"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@id/usercode_num2"
+        android:text=""
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="42dp"
+        android:layout_height="60dp"
+        android:id="@+id/usercode_num3"
+        android:spinnerMode="dropdown"
+        android:background="#ffffff"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@id/usercode_num2"
+        android:text=""
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="42dp"
+        android:layout_height="60dp"
+        android:id="@+id/usercode_num4"
+        android:spinnerMode="dropdown"
+        android:background="#ffffff"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/usercode_num3"
+        android:text=""
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please enter the other agent&apos;s user code"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/anchor"
+        android:textColor="#ffffff"
+        android:layout_centerHorizontal="true" />
+
+
+<!--
     <View
         android:id="@+id/anchor"
         android:layout_width="0dp"
@@ -90,6 +167,84 @@
         android:layout_below="@+id/usercode_spinner2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="106dp" />
+-->
 
 
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/GridLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        android:background="@android:color/background_dark"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="220dp" >
+
+
+
+        <Button
+            android:text="1"
+            android:id="@+id/onebtn"/>
+
+        <Button
+            android:text="2"
+            android:id="@+id/twobtn"/>
+
+        <Button
+            android:text="3"
+            android:id="@+id/threebtn"/>
+
+        <Button
+            android:text="4"
+            android:id="@+id/fourbtn"/>
+
+        <Button
+            android:text="5"
+            android:id="@+id/fivebtn"/>
+
+        <Button
+            android:text="6"
+            android:id="@+id/sixbtn"/>
+
+        <Button
+            android:text="7"
+            android:id="@+id/sevenbtn"/>
+
+        <Button
+            android:text="8"
+            android:id="@+id/eightbtn"/>
+
+        <Button
+            android:text="9"
+            android:id="@+id/ninebtn"/>
+
+
+
+
+        <!--<Button
+            android:layout_gravity="fill"
+            android:layout_rowSpan="3"
+            android:text="+" />-->
+
+        <Button
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill"
+            android:text="0"
+            android:id="@+id/zerobtn"/>
+
+        <Button android:text="@string/leftarrow"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:id="@+id/backspacebtn"/>
+
+        <Button
+            android:layout_columnSpan="3"
+            android:layout_gravity="fill"
+            android:layout_marginTop="16dp"
+            android:text="Send Challenge"
+            android:id="@+id/challengeBtn"/>
+
+    </GridLayout>
 </RelativeLayout>

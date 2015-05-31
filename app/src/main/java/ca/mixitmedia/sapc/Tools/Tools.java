@@ -100,7 +100,17 @@ public class Tools {
 
 
     public static void swapTo(Fragment tool){
+        //stop countdown timer when changing fragments (for minigame)
+        if(Main.countdownTimer !=null) {
+            Log.d("BN","Countdown timer not null!");
+            Main.countdownTimer.cancel();
+
+            Main.countdownTimer = null;
+        }
+
         if (Tools.Current() == tool) return;
+
+
 
 //        if (toolButtons.keySet().contains(Tools.Current()))
 //            toolButtons.get(Current()).setColorFilter(Main.getResources().getColor(R.color.RyeYellow));

@@ -64,7 +64,6 @@ public class SecretAgentMiniGame extends Fragment {
     private ImageButton poisonBtn;
 
     private Map<String, String> params = new HashMap<String, String>();
-    private CountDownTimer countdownTimer;
 
     private int agentID;
     private int opponentID;
@@ -81,6 +80,9 @@ public class SecretAgentMiniGame extends Fragment {
         View view = inflater.inflate(R.layout.fragment_minigame, container, false);
 
         mainActivity = (WeaverActivity) getActivity();
+
+
+
 
         //btn = (Button) view.findViewById(R.id.button);
         versusTxtView = (TextView) view.findViewById(R.id.versusTextView);
@@ -147,9 +149,12 @@ public class SecretAgentMiniGame extends Fragment {
                     //startStringGetRequest("http://www.mixitmedia.ca/api/challenge/9529");
 
 
+                    /*
+                    //test GET for challenge table
                     String challengeUrl = "http://www.mixitmedia.ca/api/challenge/" + mainActivity.from_usercode + "/" + mainActivity.to_usercode;
                     Log.d("BN","Challenge GET: " + challengeUrl);
                     startStringGetRequest(challengeUrl);
+                    */
 
 
                     //startJsonPostRequest();
@@ -193,13 +198,16 @@ public class SecretAgentMiniGame extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
+
+
+        if(reqQueue != null)
+            reqQueue.cancelAll(VOLLEY_TAG);
     }
 
     @Override
     public void onStop(){
         super.onStop();
 
-        countdownTimer = null;
         //cancel all requests
         if(reqQueue != null)
             reqQueue.cancelAll(VOLLEY_TAG);
@@ -309,6 +317,16 @@ public class SecretAgentMiniGame extends Fragment {
 
     }
 
+    //check if the game is still running if not, stop game logic (timers)
+    private boolean IsGameRunning(){
+        if(Tools.Current() == Tools.minigameConnectFragment){
+
+            Log.d("BN", "MinigameConnectFragment is running stop game logic!");
+            return false;
+        }
+
+        return true;
+    }
 
 
     //initial wait before game starts
@@ -321,39 +339,44 @@ public class SecretAgentMiniGame extends Fragment {
         poisonBtn.setSelected(false);
         selected = GameItem.NONE;
 
-        if(countdownTimer == null) {
+        mainActivity.countdownTimer = new CountDownTimer(2200, 200) {
 
-            countdownTimer = new CountDownTimer(2200, 2200) {
+            public void onTick(long millisUntilFinished) {
 
-                public void onTick(long millisUntilFinished) {
-                }
+            }
 
-                public void onFinish() {
-                    //display win/lose message
-                    Log.d("BN", "Countdown finished");
-                    ToggleClickableItems(true);
-                    //gameMsgTxtView.setVisibility(View.INVISIBLE);
-                    gameMsgTxtView.setText("CHOOSE YOUR TACTIC!");
-                    gametimerTxtView.setVisibility(View.VISIBLE);
-                    countdownTimer = null;
+            public void onFinish() {
+                //display win/lose message
+                Log.d("BN", "Countdown finished");
+                ToggleClickableItems(true);
+                //gameMsgTxtView.setVisibility(View.INVISIBLE);
+                gameMsgTxtView.setText("CHOOSE YOUR TACTIC!");
+                gametimerTxtView.setVisibility(View.VISIBLE);
+
+                if(IsGameRunning())
                     StartGameTimer();
-                }
-            }.start();
-        }
+            }
+        }.start();
+
+
     }
 
 
 
     private void StartGameTimer(){
 
-        if(countdownTimer == null) {
 
             //intelBtn.setVisibility(View.INVISIBLE);
             //update ontick often otherwise timer display will lag
-            countdownTimer = new CountDownTimer(6000, 10) {
+            mainActivity.countdownTimer = new CountDownTimer(6000, 33) {
 
                 public void onTick(long millisUntilFinished) {
                     gametimerTxtView.setText("" + millisUntilFinished / 1000);
+
+                    if(!IsGameRunning()) {
+                        Log.d("BN", "Game isn't running, stop timer attempt...");
+                        mainActivity.countdownTimer.cancel();
+                    }
                 }
 
                 public void onFinish() {
@@ -362,21 +385,27 @@ public class SecretAgentMiniGame extends Fragment {
                     ToggleClickableItems(false);
                     gameMsgTxtView.setVisibility(View.INVISIBLE);
                     gametimerTxtView.setText("0");
-                    countdownTimer = null;
-                    ShowWinner();
+
+                    if(IsGameRunning())
+                        ShowWinner();
 
                 }
             }.start();
-        }
+
+
+
     }
 
 
     //display win/lose game message after a few seconds
     private void ShowWinner(){
-        if(countdownTimer == null) {
-            countdownTimer = new CountDownTimer(500, 500) {
 
-                public void onTick(long millisUntilFinished) {}
+            mainActivity.countdownTimer = new CountDownTimer(500, 500) {
+
+                public void onTick(long millisUntilFinished) {
+
+
+                }
 
                 public void onFinish() {
                     //display win/lose message
@@ -432,40 +461,38 @@ public class SecretAgentMiniGame extends Fragment {
                     gameMsgTxtView.setText(winmsg);
                     gameMsgTxtView.setVisibility(View.VISIBLE);
 
-                    countdownTimer = null;
-                    NextRoundTimer();
+                    if(IsGameRunning())
+                        NextRoundTimer();
                 }
             }.start();
-        }
+
     }
 
 
     private void NextRoundTimer(){
 
-        if(countdownTimer == null) {
 
-
-            countdownTimer = new CountDownTimer(2500, 2500) {
+            mainActivity.countdownTimer = new CountDownTimer(2500, 2500) {
 
                 public void onTick(long millisUntilFinished) {
+                    if(!IsGameRunning()){
+
+                    }
                 }
 
                 public void onFinish() {
 
 
-                    countdownTimer = null;
 
                     if(!isGameOver) {
                         gameRound++;
                         InitializeGameTimer();
-
-
                     }
 
 
                 }
             }.start();
-        }
+
     }
 
 
