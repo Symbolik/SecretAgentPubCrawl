@@ -33,8 +33,8 @@ public class WeaverActivity extends DrawerActivity {
 
     public static CountDownTimer countdownTimer;
     public static final String PREFS_NAME = "MyPrefsFile";
-    public int from_usercode = 0;
-    public int to_usercode = 0;
+    public int from_usercode = 0; //this device's user_id
+    public int to_usercode = 0; //the other devices'user_id
 
 
     @Override

@@ -29,7 +29,7 @@ import ca.mixitmedia.sapc.WeaverActivity;
 
 public class MinigameConnectFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
-    private static enum POST_MODE{
+    private enum POST_MODE{
         GENERATE_CODE,
         CHALLENGE,
 
@@ -65,25 +65,42 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
         mainActivity = (WeaverActivity) getActivity();
         txtview = (TextView) view.findViewById(R.id.agentNumText);
 
+
+
+        reqQueue = VolleySingleton.GetInstance(mainActivity.getApplicationContext()).GetRequestQueue();
+
         //load user preferences
         userPrefs = mainActivity.getSharedPreferences(WeaverActivity.PREFS_NAME, 0);
 
-        //load code from SharedPreferences or get new code from the server
-        mainActivity.from_usercode = userPrefs.getInt("access_code", 999999);
-        reqQueue = VolleySingleton.GetInstance(mainActivity.getApplicationContext()).GetRequestQueue();
 
 
-        //post request for new access_code if default value was assigned
+        //uncomment to clear the preferences for testing..
+        //SharedPreferences.Editor editor = userPrefs.edit();
+        //editor.clear();
+        //editor.commit();
+
+
+        //load code from SharedPreferences or get new code from the server if default value is used
+        mainActivity.from_usercode = userPrefs.getInt("user_id", 999999);
+
+        //post request for new user_id if default value was assigned, create new entry in db table
         if(mainActivity.from_usercode == 999999){
             Log.d("BN", "invalid user code, get new user code");
-            startStringPostRequest("http://www.mixitmedia.ca/api/users", POST_MODE.GENERATE_CODE);
+            //startStringPostRequest("http://www.mixitmedia.ca/api/users", POST_MODE.GENERATE_CODE);
+            startStringPostRequest("http://www.erraticgames.com/slimproj/index.php/api/users", POST_MODE.GENERATE_CODE);
+
         }
         else{
+            Log.d("BN", "the agent id was found in the user preferences");
             SetAgentText();
 
         }
 
-        //spinner code, no longer being used
+
+
+
+
+        //bn: spinner code, access code was entered using 4 spinners, no longer being used
         /*
         int [] spinnerIds = {R.id.usercode_spinner1, R.id.usercode_spinner2, R.id.usercode_spinner3, R.id.usercode_spinner4};
         spinners = new Spinner[4];
@@ -124,8 +141,9 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
                              R.id.threebtn, R.id.fourbtn, R.id.fivebtn,
                              R.id.sixbtn, R.id.sevenbtn, R.id.eightbtn, R.id.ninebtn};
 
-        numpad = new Button[10];
 
+        //init Button array
+        numpad = new Button[10];
 
         for(int i = 0; i < buttonIDs.length;i++){
            numpad[i] = (Button) view.findViewById(buttonIDs[i]);
@@ -155,7 +173,8 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
             }
         });
 
-
+        /*the user code is put together and stored in the main activity, the actual
+        * minigame fragment itself will read from the static var*/
         challengeBtn.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 //TODO: don't attempt to challenge if the user didn't get an access code, warning msg: this requires internet connection
@@ -165,27 +184,46 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
                         .append(usercodeNumbers[2].getText())
                         .append(usercodeNumbers[3].getText());
 
-                //convert the values from the spinners into an integer
-
                //handle if nothing was entered
                 if(sb.toString().equals("")){
                     sb.append("0");
                 }
 
+
                 toUserCode = Integer.valueOf(sb.toString());
 
-                //verify that the entered to_usercode exists
+                //bn: dec20,2015, commenting out for now while testing erraticgames db
+                //verify that the entered to_usercode exists and start the challenge if ok
                 //startStringGetRequest("http://www.mixitmedia.ca/api/users/"+toUserCode);
 
+                Log.d("BN","challenge btn pressed, toUserCode = " + toUserCode);
+                //startStringGetRequest("http://www.erraticgames.com/slimproj/index.php/api/users/" + toUserCode);
+                Log.d("BN","http://www.erraticgames.com/slimproj/index.php/api/user?user_id=" + toUserCode);
+                startStringGetRequest("http://www.erraticgames.com/slimproj/index.php/api/user?user_id=" + toUserCode);
 
 
 
-                //FOR OFFLINE DEBUG TESTING ONLY, don't swap until challenge has been accepted
+
+                //bn:dec 31, todo, should post a new challenge request to server, then go to waiting screen,
+                //once challenge has been accepted on the other side, we can swap to the minigame fragment
+
+
+                //bn:dec 31, 2015, don't start challenge unless opponent id has been found
+                //FOR OFFLINE DEBUG TESTING ONLY, TODO: don't swap until challenge has been accepted
                 //swap with minigame fragment
-                mainActivity.to_usercode = toUserCode;
-                Tools.directlySwapTo(Tools.minigameFragment);
+                //mainActivity.to_usercode = toUserCode;
+               // Tools.directlySwapTo(Tools.minigameFragment);
             }
         });
+
+
+        /*
+        Log.d("BN", "starting the get request now!");
+        //bn: dec 20, 2015, try to connect to erraticgames.com using REST Api
+        //todo: edit rest api so the url looks like: erraticgames.com/api/users,
+        //if you put the index.php into the root public folder, you can omit the filename in the url
+        startStringGetRequest("http://www.erraticgames.com/slimproj/index.php/api/users");
+        */
 
         return view;
     }
@@ -197,20 +235,25 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
                 new Response.Listener<String>(){
                     @Override
                     public void onResponse(String response) {
-                        Log.d("BN", "onResponse-" + response.toString());
+
 
                         if(postMode == POST_MODE.GENERATE_CODE) {
+                            //rest api used:  startStringPostRequest("http://www.mixitmedia.ca/api/users", POST_MODE.GENERATE_CODE);
                             //save the new user code
                              SharedPreferences.Editor editor = userPrefs.edit();
 
+                            Log.d("BN", "generate id, onResponse: " + response);
 
                             try{
                                 int tmp = Integer.parseInt(response);
-                                editor.putInt("access_code", Integer.parseInt(response));
+                                Log.d("BN", "checking if value is parsed = " + tmp);
+
+                                //commented out for now while testing erraticgames db
+                                editor.putInt("user_id", Integer.parseInt(response));
                                 editor.commit();
 
                                 //get the new id from userPrefs!
-                                mainActivity.from_usercode = userPrefs.getInt("access_code", 999999);
+                                mainActivity.from_usercode = userPrefs.getInt("user_id", 999999);
                                 SetAgentText();
 
 
@@ -302,31 +345,44 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
     }
 
     public void SetAgentText(){
-        Log.d("BN", "valid ID was saved! agentID = " + mainActivity.from_usercode);
+        Log.d("BN", " stored agentID = " + mainActivity.from_usercode);
         txtview.setText("Secret Agent# " + mainActivity.from_usercode);
     }
 
 
     private void startStringGetRequest(String url){
-
         //Request a string response from the provided URL.
         StringRequest stringReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
+
             @Override
             public void onResponse(String response){
                 //gameMsgTxtView.setText("Response is: " + response);
-                Log.d("BN", "ConnectFragment, GET user: " + response);
+                Log.d("BN", "GET request response: " + response);
 
 
-                if(response.equals("test table []")){
-                    Log.d("BN", "ConnectFragment, GET FAILED! response is garbage!");
+                if(response.equals("[]")){
+                    //bn: this prints out when trying to find a user fails
+                    Log.d("BN", "user was not found! enter agent id again!");
                 }
                 else {
+
+                    Log.d("BN", "user was found, waiting for challenge to be accepted!");
+                    mainActivity.to_usercode = toUserCode; //store value in mainactivity so it can be used globally
+
+                    String challengeUrl = "";
+                    startStringPostRequest(challengeUrl, POST_MODE.CHALLENGE);
+
+                    /*
+                    ///bn: dec20, comment out for now, reeanble later
                     mainActivity.to_usercode = toUserCode;
+
 
                     //valid user found! post the challenge!
                     String challengeUrl = "http://www.mixitmedia.ca/api/challenge/" + mainActivity.from_usercode + "/" + toUserCode;
                     Log.d("BN", "Challenge POST: " + challengeUrl);
                     startStringPostRequest(challengeUrl, POST_MODE.CHALLENGE);
+                    */
+
                 }
 
             }
@@ -337,7 +393,8 @@ public class MinigameConnectFragment extends Fragment implements AdapterView.OnI
             }
         });
 
-        //Add the request to the RequestQueue.
+
+        //Add the request to the RequestQueue otherwise the request will never be sent out
         stringReq.setTag(SecretAgentMiniGame.VOLLEY_TAG);
         reqQueue.add(stringReq);
 
